@@ -1,0 +1,11 @@
+# .gitignore
+# Go binaries
+lissanai-backend
+app
+
+# Generated swagger docs
+docs/
+
+# IDE files
+.idea/
+.vscode/
