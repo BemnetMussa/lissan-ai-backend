@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
+	
 	"lissanai.com/backend/internal/database"
 	"lissanai.com/backend/internal/handler"
 	"lissanai.com/backend/internal/middleware"
@@ -20,6 +22,16 @@ import (
 
 func New() *gin.Engine {
 	router := gin.Default()
+
+	// --- CORS Middleware ---
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"}, // Replace "*" with your frontend URL in production
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// --- Database Connection ---
 	db, err := database.NewMongoConnection()
