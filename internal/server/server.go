@@ -6,19 +6,19 @@ import (
 	"os"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
-	
+	"github.com/gin-gonic/gin"
+
 	"lissanai.com/backend/internal/database"
 	"lissanai.com/backend/internal/handler"
 	"lissanai.com/backend/internal/middleware"
 	"lissanai.com/backend/internal/repository"
 	"lissanai.com/backend/internal/service"
 	"lissanai.com/backend/internal/usecase"
-	
-	_ "lissanai.com/backend/docs"
+
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "lissanai.com/backend/docs"
 )
 
 func New() *gin.Engine {
@@ -46,9 +46,16 @@ func New() *gin.Engine {
 		jwtSecret = "your-secret-key-change-this-in-production" // Default for development
 		log.Println("Warning: Using default JWT secret. Set JWT_SECRET environment variable in production.")
 	}
-	
+
 	jwtService := service.NewJWTService(jwtSecret)
 	passwordService := service.NewPasswordService()
+	apiKey := os.Getenv("API_KEY") // Replace with your actual API key or leave empty if using env var
+
+	// Create the AI service.
+	aiService, err := service.NewAiService(apiKey)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// --- Repositories ---
 	userRepo := repository.NewUserRepository(db)
@@ -58,10 +65,12 @@ func New() *gin.Engine {
 	// --- Use Cases ---
 	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService)
 	userUsecase := usecase.NewUserUsecase(userRepo, refreshTokenRepo)
+	grammer_usecase := usecase.NewGrammerUsecase(aiService)
 
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authUsecase)
 	userHandler := handler.NewUserHandler(userUsecase)
+	grammer_handler := handler.NewGrammarHandler(*grammer_usecase)
 
 	// --- Middleware ---
 	authMiddleware := middleware.AuthMiddleware(jwtService)
@@ -78,9 +87,14 @@ func New() *gin.Engine {
 			auth.POST("/refresh", authHandler.RefreshToken)
 			auth.POST("/forgot-password", authHandler.ForgotPassword)
 			auth.POST("/reset-password", authHandler.ResetPassword)
-			
+
 			// Protected auth routes
 			auth.POST("/logout", authMiddleware, authHandler.Logout)
+		}
+
+		grammar := apiV1.Group("/grammar/check")
+		{
+			grammar.POST("/", authMiddleware, grammer_handler.GrammarCheck)
 		}
 
 		// User routes (protected)
@@ -102,6 +116,6 @@ func New() *gin.Engine {
 
 	// --- Swagger ---
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	
+
 	return router
 }
