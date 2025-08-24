@@ -6,19 +6,19 @@ import (
 	"os"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
-	
+	"github.com/gin-gonic/gin"
+
 	"lissanai.com/backend/internal/database"
 	"lissanai.com/backend/internal/handler"
 	"lissanai.com/backend/internal/middleware"
 	"lissanai.com/backend/internal/repository"
 	"lissanai.com/backend/internal/service"
 	"lissanai.com/backend/internal/usecase"
-	
-	_ "lissanai.com/backend/docs"
+
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "lissanai.com/backend/docs"
 )
 
 func New() *gin.Engine {
@@ -46,7 +46,7 @@ func New() *gin.Engine {
 		jwtSecret = "your-secret-key-change-this-in-production" // Default for development
 		log.Println("Warning: Using default JWT secret. Set JWT_SECRET environment variable in production.")
 	}
-	
+
 	jwtService := service.NewJWTService(jwtSecret)
 	passwordService := service.NewPasswordService()
 
@@ -78,7 +78,7 @@ func New() *gin.Engine {
 			auth.POST("/refresh", authHandler.RefreshToken)
 			auth.POST("/forgot-password", authHandler.ForgotPassword)
 			auth.POST("/reset-password", authHandler.ResetPassword)
-			
+
 			// Protected auth routes
 			auth.POST("/logout", authMiddleware, authHandler.Logout)
 		}
@@ -93,15 +93,12 @@ func New() *gin.Engine {
 			users.POST("/me/push-token", userHandler.AddPushToken)
 		}
 
-		// Future routes for other features
-		// interviews := apiV1.Group("/interviews")
-		// grammar := apiV1.Group("/grammar")
-		// pronunciation := apiV1.Group("/pronunciation")
-		// learning := apiV1.Group("/learning")
+		// --- Register AI Email Route ---
+		SetupEmailRoutes(apiV1)
 	}
 
 	// --- Swagger ---
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	
+
 	return router
 }
