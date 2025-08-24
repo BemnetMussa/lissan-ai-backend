@@ -56,6 +56,10 @@ func New() *gin.Engine {
 	if err != nil {
 		log.Fatal(err)
 	}
+	chatAiService := service.NewChatAIService()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	// --- Repositories ---
 	userRepo := repository.NewUserRepository(db)
@@ -66,11 +70,13 @@ func New() *gin.Engine {
 	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService)
 	userUsecase := usecase.NewUserUsecase(userRepo, refreshTokenRepo)
 	grammer_usecase := usecase.NewGrammerUsecase(aiService)
+	chat_usecase := usecase.NewChatUsecase(chatAiService)
 
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authUsecase)
 	userHandler := handler.NewUserHandler(userUsecase)
 	grammer_handler := handler.NewGrammarHandler(*grammer_usecase)
+	chat_handler := handler.NewChatHandler(chat_usecase)
 
 	// --- Middleware ---
 	authMiddleware := middleware.AuthMiddleware(jwtService)
@@ -96,6 +102,8 @@ func New() *gin.Engine {
 		{
 			grammar.POST("/", authMiddleware, grammer_handler.GrammarCheck)
 		}
+		chat := apiV1.Group("/chat")
+		chat.GET("/ws", chat_handler.HandleWebSocket)
 
 		// User routes (protected)
 		users := apiV1.Group("/users")
