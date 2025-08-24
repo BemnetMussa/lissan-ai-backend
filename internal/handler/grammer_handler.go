@@ -7,34 +7,45 @@ import (
 	"lissanai.com/backend/internal/usecase"
 )
 
-type GrammarCheck struct {
-	grammer_usecase usecase.GrammarUsecase
+type GrammarHandler struct {
+	grammarUsecase *usecase.GrammarUsecase
 }
 
-func NewGrammarHandler(grammer_usecase usecase.GrammarUsecase) *GrammarCheck {
-	return &GrammarCheck{
-		grammer_usecase: grammer_usecase,
+func NewGrammarHandler(grammarUsecase *usecase.GrammarUsecase) *GrammarHandler {
+	return &GrammarHandler{
+		grammarUsecase: grammarUsecase,
 	}
 }
 
-func (h *GrammarCheck) GrammarCheck(c *gin.Context) {
-	var request struct {
-		Text string `json:"text" binding:"required"`
-	}
+// GrammarRequest defines the request body for grammar checking.
+type GrammarRequest struct {
+	Text string `json:"text" binding:"required" example:"he have two cats"`
+}
 
-	// Validate request
+// GrammarCheck godoc
+// @Summary      Check Grammar
+// @Description  Analyzes text for grammatical errors and returns corrections and explanations.
+// @Tags         Grammar
+// @Accept       json
+// @Produce      json
+// @Param        text body GrammarRequest true "Text to be checked"
+// @Success      200 {object} models.GrammarResponse "Returns corrected text and explanation"
+// @Failure      400 {object} object{error=string}
+// @Failure      500 {object} object{error=string}
+// @Router       /grammar/check [post]
+func (h *GrammarHandler) GrammarCheck(c *gin.Context) {
+	var request GrammarRequest
+
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: " + err.Error()})
 		return
 	}
 
-	// Call usecase/service
-	grammarResp, err := h.grammer_usecase.CheckGrammer(request.Text)
+	resp, err := h.grammarUsecase.CheckGrammar(request.Text)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Return JSON response
-	c.JSON(http.StatusOK, grammarResp)
+	c.JSON(http.StatusOK, resp)
 }

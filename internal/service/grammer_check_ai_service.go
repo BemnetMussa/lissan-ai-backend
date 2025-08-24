@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"os"
 
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
@@ -17,15 +18,20 @@ type AiService struct {
 }
 
 // NewAiService creates a new Gemini AI service client
-func NewAiService(apiKey string) (*AiService, error) {
+func NewAiService() (*AiService, error) {
 	ctx := context.Background()
 
+	apiKey := os.Getenv("GEMINI_API_KEY") // <-- READ FROM ENVIRONMENT
+	if apiKey == "" {
+		return nil, fmt.Errorf("GEMINI_API_KEY environment variable not set")
+	}
+
+	// Use the apiKey variable here
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create Gemini AI client: %w", err)
 	}
 
-	// Use gemini-1.5-flash for grammar tasks
 	model := client.GenerativeModel("gemini-1.5-flash")
 	return &AiService{model: model}, nil
 }
