@@ -5,18 +5,17 @@ import (
 	"lissanai.com/backend/internal/domain/models"
 )
 
+// GrammarUsecase handles grammar checking.
 type GrammarUsecase struct {
-	ai_service interfaces.AiServiceInterface
+	AiService interfaces.AiServiceInterface
 }
 
-func NewGrammerUsecase(ai_service interfaces.AiServiceInterface) *GrammarUsecase {
-	return &GrammarUsecase{ai_service: ai_service}
+// usecase/grammar_usecase.go
+func NewGrammarUsecase(aiService interfaces.AiServiceInterface) *GrammarUsecase {
+    return &GrammarUsecase{AiService: aiService}
 }
 
-func (au *GrammarUsecase) CheckGrammer(text string) (*models.GrammarResponse, error) {
-	response, err := au.ai_service.CheckGrammar(text)
-	if err != nil {
-		return nil, err
-	}
-	return response, nil
+
+func (g *GrammarUsecase) CheckGrammar(text string) (*models.GrammarResponse, error) {
+	return g.AiService.CheckGrammar(text)
 }

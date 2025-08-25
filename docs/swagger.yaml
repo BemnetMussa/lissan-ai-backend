@@ -143,11 +143,48 @@ definitions:
       updated_at:
         type: string
     type: object
+  entities.EmailRequest:
+    properties:
+      prompt:
+        type: string
+      template_type:
+        type: string
+      tone:
+        type: string
+      type:
+        type: string
+    required:
+    - prompt
+    type: object
+  entities.EmailResponse:
+    properties:
+      generated_email:
+        type: string
+      subject:
+        type: string
+    type: object
+  handler.GrammarRequest:
+    properties:
+      text:
+        example: he have two cats
+        type: string
+    required:
+    - text
+    type: object
+  models.GrammarResponse:
+    properties:
+      corrected_text:
+        example: He has two cats
+        type: string
+      explanation:
+        example: Corrected verb agreement
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
   description: AI-powered English coach for Ethiopians seeking global job opportunities
-  title: LissanAI Professional API
+  title: LissanAI API
   version: "1.0"
 paths:
   /auth/forgot-password:
@@ -353,6 +390,81 @@ paths:
       summary: Social authentication
       tags:
       - Auth
+  /email/process:
+    post:
+      consumes:
+      - application/json
+      description: Generates a new email or edits an existing one using AI. Set the
+        'type' field in the request body to 'GENERATE' or 'EDIT'.
+      parameters:
+      - description: The user's request, including the type (GENERATE/EDIT), prompt,
+          and optional tone.
+        in: body
+        name: emailRequest
+        required: true
+        schema:
+          $ref: '#/definitions/entities.EmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.EmailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Process Email Request
+      tags:
+      - Email
+  /grammar/check:
+    post:
+      consumes:
+      - application/json
+      description: Analyzes text for grammatical errors and returns corrections and
+        explanations.
+      parameters:
+      - description: Text to be checked
+        in: body
+        name: text
+        required: true
+        schema:
+          $ref: '#/definitions/handler.GrammarRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns corrected text and explanation
+          schema:
+            $ref: '#/definitions/models.GrammarResponse'
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Check Grammar
+      tags:
+      - Grammar
   /users/me:
     delete:
       description: Allow a user to delete their account

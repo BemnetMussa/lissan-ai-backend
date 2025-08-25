@@ -6,7 +6,8 @@ type Correction struct {
 	Explanation     string `json:"explanation"`
 }
 
+// GrammarResponse is returned by the GrammarUsecase.
 type GrammarResponse struct {
-	CorrectedText string       `json:"corrected_text"`
-	Corrections   []Correction `json:"corrections"`
+	CorrectedText string `json:"corrected_text" example:"He has two cats"`
+	Explanation   string `json:"explanation" example:"Corrected verb agreement"`
 }

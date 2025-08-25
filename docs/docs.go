@@ -329,6 +329,118 @@ const docTemplate = `{
                 }
             }
         },
+        "/email/process": {
+            "post": {
+                "description": "Generates a new email or edits an existing one using AI. Set the 'type' field in the request body to 'GENERATE' or 'EDIT'.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Email"
+                ],
+                "summary": "Process Email Request",
+                "parameters": [
+                    {
+                        "description": "The user's request, including the type (GENERATE/EDIT), prompt, and optional tone.",
+                        "name": "emailRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.EmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.EmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/grammar/check": {
+            "post": {
+                "description": "Analyzes text for grammatical errors and returns corrections and explanations.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Grammar"
+                ],
+                "summary": "Check Grammar",
+                "parameters": [
+                    {
+                        "description": "Text to be checked",
+                        "name": "text",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.GrammarRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns corrected text and explanation",
+                        "schema": {
+                            "$ref": "#/definitions/models.GrammarResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users/me": {
             "get": {
                 "security": [
@@ -716,6 +828,62 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "entities.EmailRequest": {
+            "type": "object",
+            "required": [
+                "prompt"
+            ],
+            "properties": {
+                "prompt": {
+                    "type": "string"
+                },
+                "template_type": {
+                    "type": "string"
+                },
+                "tone": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.EmailResponse": {
+            "type": "object",
+            "properties": {
+                "generated_email": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.GrammarRequest": {
+            "type": "object",
+            "required": [
+                "text"
+            ],
+            "properties": {
+                "text": {
+                    "type": "string",
+                    "example": "he have two cats"
+                }
+            }
+        },
+        "models.GrammarResponse": {
+            "type": "object",
+            "properties": {
+                "corrected_text": {
+                    "type": "string",
+                    "example": "He has two cats"
+                },
+                "explanation": {
+                    "type": "string",
+                    "example": "Corrected verb agreement"
+                }
+            }
         }
     },
     "securityDefinitions": {
@@ -734,7 +902,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "LissanAI Professional API",
+	Title:            "LissanAI API",
 	Description:      "AI-powered English coach for Ethiopians seeking global job opportunities",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

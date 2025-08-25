@@ -1,39 +1,49 @@
+// service/ai_email_service.go
 package service
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
-	"google.golang.org/genai"
+	"github.com/google/generative-ai-go/genai"
+
+	"google.golang.org/api/option"
 	"lissanai.com/backend/internal/domain/entities"
-	"lissanai.com/backend/internal/domain/interfaces"
 )
 
-// rawEmailResponse matches the AI's JSON output
+// rawEmailResponse matches the AI's JSON output.
 type rawEmailResponse struct {
 	Subject        string `json:"subject"`
 	GeneratedEmail string `json:"body"`
 }
 
-// aiEmailService is the concrete implementation of EmailService
+// aiEmailService holds the specific AI model that will handle requests.
 type aiEmailService struct {
-	client *genai.Client
-	model  string
+	model *genai.GenerativeModel
 }
 
-// NewAIEmailService initializes the AI email service
-func NewAIEmailService(apiKey string, model string) (interfaces.EmailService, error) {
+func NewAIEmailService() (*aiEmailService, error) {
 	ctx := context.Background()
-	client, err := genai.NewClient(ctx, &genai.ClientConfig{APIKey: apiKey})
-	if err != nil {
-		return nil, err
+
+	apiKey := os.Getenv("GEMINI_API_KEY") // <-- READ FROM ENVIRONMENT
+	if apiKey == "" {
+		return nil, fmt.Errorf("GEMINI_API_KEY environment variable not set")
 	}
-	return &aiEmailService{client: client, model: model}, nil
+
+	// Use the apiKey variable here
+	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create Gemini AI client: %w", err)
+	}
+
+	model := client.GenerativeModel("gemini-1.5-flash")
+	return &aiEmailService{model: model}, nil
 }
 
-// GenerateEmail returns a structured AI output
+// ProcessEmail handles the logic for both generating and editing emails.
 func (s *aiEmailService) ProcessEmail(ctx context.Context, req *entities.EmailRequest) (*entities.EmailResponse, error) {
 	var prompt string
 
@@ -70,32 +80,32 @@ User's Email Draft: %s
 `, req.Tone, req.TemplateType, req.Prompt)
 
 	default:
-		// Handle cases where the type is missing or invalid
 		return nil, fmt.Errorf("invalid request type: '%s'. Must be 'GENERATE' or 'EDIT'", req.Type)
 	}
 
-	result, err := s.client.Models.GenerateContent(ctx, s.model, genai.Text(prompt), nil)
+	resp, err := s.model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to generate content: %w", err)
 	}
 
-	// Clean up raw AI output
-	text := strings.TrimSpace(result.Text())
+	if len(resp.Candidates) == 0 || len(resp.Candidates[0].Content.Parts) == 0 {
+		return nil, fmt.Errorf("AI returned an empty response")
+	}
+	text := string(resp.Candidates[0].Content.Parts[0].(genai.Text))
+
+	text = strings.TrimSpace(text)
 	text = strings.TrimPrefix(text, "```json")
 	text = strings.TrimPrefix(text, "```")
 	text = strings.TrimSuffix(text, "```")
 	text = strings.TrimSpace(text)
 
-	// Parse into our internal struct
 	var rawResp rawEmailResponse
 	if err := json.Unmarshal([]byte(text), &rawResp); err != nil {
-		return nil, fmt.Errorf("failed to parse AI response: %w\nRaw output: %s", err, text)
+		return nil, fmt.Errorf("failed to parse AI response: %w\nRaw output from AI: %s", err, text)
 	}
 
-	// Convert escaped "\n" into real line breaks
 	cleanBody := strings.ReplaceAll(rawResp.GeneratedEmail, "\\n", "\n")
 
-	// Build the final response struct to send back to the handler
 	emailResp := &entities.EmailResponse{
 		Subject:        rawResp.Subject,
 		GeneratedEmail: cleanBody,

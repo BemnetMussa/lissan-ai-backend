@@ -8,9 +8,9 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-
 	"lissanai.com/backend/internal/database"
 	"lissanai.com/backend/internal/handler"
+	
 	"lissanai.com/backend/internal/middleware"
 	"lissanai.com/backend/internal/repository"
 	"lissanai.com/backend/internal/service"
@@ -49,10 +49,9 @@ func New() *gin.Engine {
 
 	jwtService := service.NewJWTService(jwtSecret)
 	passwordService := service.NewPasswordService()
-	apiKey := os.Getenv("API_KEY") // Replace with your actual API key or leave empty if using env var
 
 	// Create the AI service.
-	aiService, err := service.NewAiService(apiKey)
+	aiService, err := service.NewAiService()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,13 +64,12 @@ func New() *gin.Engine {
 	// --- Use Cases ---
 	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService)
 	userUsecase := usecase.NewUserUsecase(userRepo, refreshTokenRepo)
-	grammer_usecase := usecase.NewGrammerUsecase(aiService)
 
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authUsecase)
 	userHandler := handler.NewUserHandler(userUsecase)
-	grammer_handler := handler.NewGrammarHandler(*grammer_usecase)
-
+	grammarUsecase := usecase.NewGrammarUsecase(aiService)
+	grammarHandler := handler.NewGrammarHandler(grammarUsecase)
 	// --- Middleware ---
 	authMiddleware := middleware.AuthMiddleware(jwtService)
 
@@ -92,11 +90,10 @@ func New() *gin.Engine {
 			auth.POST("/logout", authMiddleware, authHandler.Logout)
 		}
 
-		grammar := apiV1.Group("/grammar/check")
+		grammar := apiV1.Group("/grammar")
 		{
-			grammar.POST("/", authMiddleware, grammer_handler.GrammarCheck)
+			grammar.POST("/check", grammarHandler.GrammarCheck) // no auth middleware for Swagger testing
 		}
-
 		// User routes (protected)
 		users := apiV1.Group("/users")
 		users.Use(authMiddleware)

@@ -1,10 +1,7 @@
-// internal/server/email_draft_server.go
 package server
 
 import (
-	"os"
-
-	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin" // <-- added
 	"lissanai.com/backend/internal/domain/interfaces"
 	"lissanai.com/backend/internal/handler"
 	"lissanai.com/backend/internal/service"
@@ -14,7 +11,7 @@ import (
 // SetupEmailRoutes sets up the email generation endpoint
 func SetupEmailRoutes(router *gin.RouterGroup) interfaces.EmailUsecase {
 	// 1. Initialize the AI email service
-	emailService, err := service.NewAIEmailService(os.Getenv("GEMINI_API_KEY"), "gemini-2.5-flash")
+	emailService, err := service.NewAIEmailService()
 	if err != nil {
 		panic(err) // fail fast if API key or client setup fails
 	}
@@ -26,7 +23,7 @@ func SetupEmailRoutes(router *gin.RouterGroup) interfaces.EmailUsecase {
 	emailController := handler.NewEmailController(emailUC)
 
 	// 4. Define the route
-	router.POST("/email", emailController.ProcessEmailHandler)
+	router.POST("/email/process", emailController.ProcessEmailHandler)
 
 	return emailUC
 }
