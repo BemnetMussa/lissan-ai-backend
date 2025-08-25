@@ -49,6 +49,13 @@ func New() *gin.Engine {
 
 	jwtService := service.NewJWTService(jwtSecret)
 	passwordService := service.NewPasswordService()
+	apiKey := os.Getenv("API_KEY") // Replace with your actual API key or leave empty if using env var
+
+	// Create the AI service.
+	aiService, err := service.NewAiService(apiKey)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// --- Repositories ---
 	userRepo := repository.NewUserRepository(db)
@@ -58,10 +65,12 @@ func New() *gin.Engine {
 	// --- Use Cases ---
 	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService)
 	userUsecase := usecase.NewUserUsecase(userRepo, refreshTokenRepo)
+	grammer_usecase := usecase.NewGrammerUsecase(aiService)
 
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authUsecase)
 	userHandler := handler.NewUserHandler(userUsecase)
+	grammer_handler := handler.NewGrammarHandler(*grammer_usecase)
 
 	// --- Middleware ---
 	authMiddleware := middleware.AuthMiddleware(jwtService)
@@ -81,6 +90,11 @@ func New() *gin.Engine {
 
 			// Protected auth routes
 			auth.POST("/logout", authMiddleware, authHandler.Logout)
+		}
+
+		grammar := apiV1.Group("/grammar/check")
+		{
+			grammar.POST("/", authMiddleware, grammer_handler.GrammarCheck)
 		}
 
 		// User routes (protected)
