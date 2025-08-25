@@ -107,11 +107,8 @@ func New() *gin.Engine {
 			users.POST("/me/push-token", userHandler.AddPushToken)
 		}
 
-		// Future routes for other features
-		// interviews := apiV1.Group("/interviews")
-		// grammar := apiV1.Group("/grammar")
-		// pronunciation := apiV1.Group("/pronunciation")
-		// learning := apiV1.Group("/learning")
+		// --- Register AI Email Route ---
+		SetupEmailRoutes(apiV1)
 	}
 
 	// --- Swagger ---
