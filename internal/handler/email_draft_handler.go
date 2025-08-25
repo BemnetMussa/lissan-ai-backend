@@ -17,7 +17,7 @@ func NewEmailController(emailUC interfaces.EmailUsecase) *EmailController {
 	return &EmailController{emailUC: emailUC}
 }
 
-func (c *EmailController) GenerateEmailHandler(ctx *gin.Context) {
+func (c *EmailController) ProcessEmailHandler(ctx *gin.Context) {
 	var req entities.EmailRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

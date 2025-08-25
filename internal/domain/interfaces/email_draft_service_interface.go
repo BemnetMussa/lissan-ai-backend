@@ -8,5 +8,5 @@ import (
 
 // EmailService defines the contract for generating emails with AI
 type EmailService interface {
-	GenerateEmail(ctx context.Context, req *entities.EmailRequest) (*entities.EmailResponse, error)
+	ProcessEmail(ctx context.Context, req *entities.EmailRequest) (*entities.EmailResponse, error)
 }

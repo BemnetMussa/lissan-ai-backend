@@ -26,7 +26,7 @@ func SetupEmailRoutes(router *gin.RouterGroup) interfaces.EmailUsecase {
 	emailController := handler.NewEmailController(emailUC)
 
 	// 4. Define the route
-	router.POST("/generate-email", emailController.GenerateEmailHandler)
+	router.POST("/email", emailController.ProcessEmailHandler)
 
 	return emailUC
 }

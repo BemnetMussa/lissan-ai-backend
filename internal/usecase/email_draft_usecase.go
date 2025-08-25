@@ -28,7 +28,7 @@ func (uc *EmailUsecaseImpl) GenerateProfessionalEmail(ctx context.Context, req *
 	}
 
 	// Call the AI service to generate email
-	emailResp, err := uc.emailService.GenerateEmail(ctx, req)
+	emailResp, err := uc.emailService.ProcessEmail(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate email: %w", err)
 	}
