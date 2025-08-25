@@ -13,7 +13,7 @@ import (
 // @title           LissanAI API
 // @version         1.0
 // @description     AI-powered English coach for Ethiopians seeking global job opportunities
-// @host            localhost:8080
+// @host            lissan-ai-backend-dev.onrender.com
 // @BasePath        /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
@@ -35,4 +35,3 @@ func main() {
 	server.Run(":" + port)
 }
 
-// lissan-ai-backend-dev.onrender.com
