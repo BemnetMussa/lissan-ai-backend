@@ -4,22 +4,35 @@ package server
 import (
 	"log"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"lissanai.com/backend/internal/database"
 	"lissanai.com/backend/internal/handler"
+	
 	"lissanai.com/backend/internal/middleware"
 	"lissanai.com/backend/internal/repository"
 	"lissanai.com/backend/internal/service"
 	"lissanai.com/backend/internal/usecase"
-	
-	_ "lissanai.com/backend/docs"
+
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "lissanai.com/backend/docs"
 )
 
 func New() *gin.Engine {
 	router := gin.Default()
+
+	// --- CORS Middleware ---
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"}, // Replace "*" with your frontend URL in production
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// --- Database Connection ---
 	db, err := database.NewMongoConnection()
@@ -33,10 +46,16 @@ func New() *gin.Engine {
 		jwtSecret = "your-secret-key-change-this-in-production" // Default for development
 		log.Println("Warning: Using default JWT secret. Set JWT_SECRET environment variable in production.")
 	}
-	
+
 	jwtService := service.NewJWTService(jwtSecret)
 	passwordService := service.NewPasswordService()
 	emailService := service.NewEmailService()
+
+	// Create the AI service.
+	aiService, err := service.NewAiService()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// --- Repositories ---
 	userRepo := repository.NewUserRepository(db)
@@ -50,7 +69,8 @@ func New() *gin.Engine {
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authUsecase)
 	userHandler := handler.NewUserHandler(userUsecase)
-
+	grammarUsecase := usecase.NewGrammarUsecase(aiService)
+	grammarHandler := handler.NewGrammarHandler(grammarUsecase)
 	// --- Middleware ---
 	authMiddleware := middleware.AuthMiddleware(jwtService)
 
@@ -66,11 +86,15 @@ func New() *gin.Engine {
 			auth.POST("/refresh", authHandler.RefreshToken)
 			auth.POST("/forgot-password", authHandler.ForgotPassword)
 			auth.POST("/reset-password", authHandler.ResetPassword)
-			
+
 			// Protected auth routes
 			auth.POST("/logout", authMiddleware, authHandler.Logout)
 		}
 
+		grammar := apiV1.Group("/grammar")
+		{
+			grammar.POST("/check", grammarHandler.GrammarCheck) // no auth middleware for Swagger testing
+		}
 		// User routes (protected)
 		users := apiV1.Group("/users")
 		users.Use(authMiddleware)
@@ -81,15 +105,12 @@ func New() *gin.Engine {
 			users.POST("/me/push-token", userHandler.AddPushToken)
 		}
 
-		// Future routes for other features
-		// interviews := apiV1.Group("/interviews")
-		// grammar := apiV1.Group("/grammar")
-		// pronunciation := apiV1.Group("/pronunciation")
-		// learning := apiV1.Group("/learning")
+		// --- Register AI Email Route ---
+		SetupEmailRoutes(apiV1)
 	}
 
 	// --- Swagger ---
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	
+
 	return router
 }

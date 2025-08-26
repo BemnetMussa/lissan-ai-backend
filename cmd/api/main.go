@@ -7,12 +7,13 @@ import (
 	
 	"github.com/joho/godotenv"
 	"lissanai.com/backend/internal/server"
+	_ "lissanai.com/backend/docs" // <-- add this for swagger
 )
 
-// @title           LissanAI Professional API
+// @title           LissanAI API
 // @version         1.0
 // @description     AI-powered English coach for Ethiopians seeking global job opportunities
-// @host            localhost:8080
+// @host            lissan-ai-backend-dev.onrender.com
 // @BasePath        /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in header
@@ -33,3 +34,4 @@ func main() {
 	log.Printf("Starting LissanAI server on port %s", port)
 	server.Run(":" + port)
 }
+
