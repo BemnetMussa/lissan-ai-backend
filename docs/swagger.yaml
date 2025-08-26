@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  lissanai_com_backend_internal_domain.AuthResponse:
+  domain.AuthResponse:
     properties:
       access_token:
         type: string
@@ -9,14 +9,14 @@ definitions:
       refresh_token:
         type: string
       user:
-        $ref: '#/definitions/lissanai_com_backend_internal_domain.User'
+        $ref: '#/definitions/domain.User'
     type: object
-  lissanai_com_backend_internal_domain.ErrorResponse:
+  domain.ErrorResponse:
     properties:
       error:
         type: string
     type: object
-  lissanai_com_backend_internal_domain.ForgotPasswordRequest:
+  domain.ForgotPasswordRequest:
     properties:
       email:
         example: john@lissanai.com
@@ -24,7 +24,7 @@ definitions:
     required:
     - email
     type: object
-  lissanai_com_backend_internal_domain.LoginRequest:
+  domain.LoginRequest:
     properties:
       email:
         example: john@lissanai.com
@@ -36,12 +36,12 @@ definitions:
     - email
     - password
     type: object
-  lissanai_com_backend_internal_domain.MessageResponse:
+  domain.MessageResponse:
     properties:
       message:
         type: string
     type: object
-  lissanai_com_backend_internal_domain.PushTokenRequest:
+  domain.PushTokenRequest:
     properties:
       platform:
         example: ios
@@ -53,7 +53,7 @@ definitions:
     - platform
     - token
     type: object
-  lissanai_com_backend_internal_domain.RefreshTokenRequest:
+  domain.RefreshTokenRequest:
     properties:
       refresh_token:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -61,7 +61,7 @@ definitions:
     required:
     - refresh_token
     type: object
-  lissanai_com_backend_internal_domain.RegisterRequest:
+  domain.RegisterRequest:
     properties:
       email:
         example: john@lissanai.com
@@ -78,7 +78,7 @@ definitions:
     - name
     - password
     type: object
-  lissanai_com_backend_internal_domain.ResetPasswordRequest:
+  domain.ResetPasswordRequest:
     properties:
       new_password:
         example: newstrongpassword123
@@ -91,7 +91,7 @@ definitions:
     - new_password
     - token
     type: object
-  lissanai_com_backend_internal_domain.SocialAuthRequest:
+  domain.SocialAuthRequest:
     properties:
       access_token:
         example: ya29.a0AfH6SMC...
@@ -109,14 +109,14 @@ definitions:
     - access_token
     - provider
     type: object
-  lissanai_com_backend_internal_domain.TokenResponse:
+  domain.TokenResponse:
     properties:
       access_token:
         type: string
       expires_in:
         type: integer
     type: object
-  lissanai_com_backend_internal_domain.UpdateProfileRequest:
+  domain.UpdateProfileRequest:
     properties:
       name:
         example: John Updated
@@ -125,7 +125,7 @@ definitions:
         additionalProperties: true
         type: object
     type: object
-  lissanai_com_backend_internal_domain.User:
+  domain.User:
     properties:
       created_at:
         type: string
@@ -143,23 +143,60 @@ definitions:
       updated_at:
         type: string
     type: object
-  lissanai_com_backend_internal_domain_models.ErrorResponse:
+  entities.EmailRequest:
+    properties:
+      prompt:
+        type: string
+      template_type:
+        type: string
+      tone:
+        type: string
+      type:
+        type: string
+    required:
+    - prompt
+    type: object
+  entities.EmailResponse:
+    properties:
+      generated_email:
+        type: string
+      subject:
+        type: string
+    type: object
+  handler.GrammarRequest:
+    properties:
+      text:
+        example: he have two cats
+        type: string
+    required:
+    - text
+    type: object
+  models.Correction:
+    properties:
+      corrected_phrase:
+        type: string
+      explanation:
+        type: string
+      original_phrase:
+        type: string
+    type: object
+  models.ErrorResponse:
     properties:
       error:
         type: string
     type: object
-  lissanai_com_backend_internal_domain_models.Feedback:
+  models.Feedback:
     properties:
       feedback_points:
         items:
-          $ref: '#/definitions/lissanai_com_backend_internal_domain_models.FeedbackPoint'
+          $ref: '#/definitions/models.FeedbackPoint'
         type: array
       overall_summary:
         type: string
       score_percentage:
         type: integer
     type: object
-  lissanai_com_backend_internal_domain_models.FeedbackPoint:
+  models.FeedbackPoint:
     properties:
       focus_phrase:
         type: string
@@ -169,19 +206,29 @@ definitions:
         description: grammar, pronunciation, structure
         type: string
     type: object
-  lissanai_com_backend_internal_domain_models.NextQuestionReturn:
+  models.GrammarResponse:
+    properties:
+      corrected_text:
+        example: He has two cats
+        type: string
+      corrections:
+        items:
+          $ref: '#/definitions/models.Correction'
+        type: array
+    type: object
+  models.NextQuestionReturn:
     properties:
       question:
         type: string
     type: object
-  lissanai_com_backend_internal_domain_models.SessionReturn:
+  models.SessionReturn:
     properties:
       question_number:
         type: integer
       session_id:
         type: string
     type: object
-  lissanai_com_backend_internal_domain_models.SessionSummary:
+  models.SessionSummary:
     properties:
       completed:
         type: integer
@@ -203,7 +250,7 @@ definitions:
           type: string
         type: array
     type: object
-  lissanai_com_backend_internal_domain_models.SubmitAnswerRequest:
+  models.SubmitAnswerRequest:
     properties:
       answer:
         example: My answer to the question
@@ -212,11 +259,11 @@ definitions:
         example: 13c70d60-8dab-4b08-b454-5225dcca1809
         type: string
     type: object
-host: lissan-ai-backend-dev.onrender.com
+host: localhost:8080
 info:
   contact: {}
   description: AI-powered English coach for Ethiopians seeking global job opportunities
-  title: LissanAI Professional API
+  title: LissanAI API
   version: "1.0"
 paths:
   /auth/forgot-password:
@@ -230,18 +277,18 @@ paths:
         name: email
         required: true
         schema:
-          $ref: '#/definitions/lissanai_com_backend_internal_domain.ForgotPasswordRequest'
+          $ref: '#/definitions/domain.ForgotPasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.MessageResponse'
+            $ref: '#/definitions/domain.MessageResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       summary: Request password reset
       tags:
       - Auth
@@ -256,22 +303,22 @@ paths:
         name: credentials
         required: true
         schema:
-          $ref: '#/definitions/lissanai_com_backend_internal_domain.LoginRequest'
+          $ref: '#/definitions/domain.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.AuthResponse'
+            $ref: '#/definitions/domain.AuthResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       summary: Login user
       tags:
       - Auth
@@ -285,18 +332,18 @@ paths:
         in: body
         name: refreshToken
         schema:
-          $ref: '#/definitions/lissanai_com_backend_internal_domain.RefreshTokenRequest'
+          $ref: '#/definitions/domain.RefreshTokenRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.MessageResponse'
+            $ref: '#/definitions/domain.MessageResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Logout user
@@ -313,22 +360,22 @@ paths:
         name: refreshToken
         required: true
         schema:
-          $ref: '#/definitions/lissanai_com_backend_internal_domain.RefreshTokenRequest'
+          $ref: '#/definitions/domain.RefreshTokenRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.TokenResponse'
+            $ref: '#/definitions/domain.TokenResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       summary: Refresh access token
       tags:
       - Auth
@@ -343,22 +390,22 @@ paths:
         name: userInfo
         required: true
         schema:
-          $ref: '#/definitions/lissanai_com_backend_internal_domain.RegisterRequest'
+          $ref: '#/definitions/domain.RegisterRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.AuthResponse'
+            $ref: '#/definitions/domain.AuthResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       summary: Register a new user
       tags:
       - Auth
@@ -373,22 +420,22 @@ paths:
         name: resetInfo
         required: true
         schema:
-          $ref: '#/definitions/lissanai_com_backend_internal_domain.ResetPasswordRequest'
+          $ref: '#/definitions/domain.ResetPasswordRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.MessageResponse'
+            $ref: '#/definitions/domain.MessageResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       summary: Reset password
       tags:
       - Auth
@@ -403,25 +450,100 @@ paths:
         name: socialInfo
         required: true
         schema:
-          $ref: '#/definitions/lissanai_com_backend_internal_domain.SocialAuthRequest'
+          $ref: '#/definitions/domain.SocialAuthRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.AuthResponse'
+            $ref: '#/definitions/domain.AuthResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       summary: Social authentication
       tags:
       - Auth
+  /email/process:
+    post:
+      consumes:
+      - application/json
+      description: Generates a new email or edits an existing one using AI. Set the
+        'type' field in the request body to 'GENERATE' or 'EDIT'.
+      parameters:
+      - description: The user's request, including the type (GENERATE/EDIT), prompt,
+          and optional tone.
+        in: body
+        name: emailRequest
+        required: true
+        schema:
+          $ref: '#/definitions/entities.EmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.EmailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Process Email Request
+      tags:
+      - Email
+  /grammar/check:
+    post:
+      consumes:
+      - application/json
+      description: Analyzes text for grammatical errors and returns corrections and
+        explanations.
+      parameters:
+      - description: Text to be checked
+        in: body
+        name: text
+        required: true
+        schema:
+          $ref: '#/definitions/handler.GrammarRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns corrected text and explanation
+          schema:
+            $ref: '#/definitions/models.GrammarResponse'
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Check Grammar
+      tags:
+      - Grammar
   /interview/{session_id}/end:
     post:
       description: Ends the session and returns the final summary
@@ -437,15 +559,15 @@ paths:
         "200":
           description: Session summary returned
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain_models.SessionSummary'
+            $ref: '#/definitions/models.SessionSummary'
         "400":
           description: Bad request
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: End an interview session
@@ -462,22 +584,22 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/lissanai_com_backend_internal_domain_models.SubmitAnswerRequest'
+          $ref: '#/definitions/models.SubmitAnswerRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Answer submitted successfully
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain_models.Feedback'
+            $ref: '#/definitions/models.Feedback'
         "400":
           description: Bad request
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Submit user's answer
@@ -498,11 +620,11 @@ paths:
         "200":
           description: Next question returned
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain_models.NextQuestionReturn'
+            $ref: '#/definitions/models.NextQuestionReturn'
         "400":
           description: Bad request
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Get the next interview question
@@ -519,15 +641,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain_models.SessionReturn'
+            $ref: '#/definitions/models.SessionReturn'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse'
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Start a new interview session
@@ -542,15 +664,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.MessageResponse'
+            $ref: '#/definitions/domain.MessageResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Delete user account
@@ -564,15 +686,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.User'
+            $ref: '#/definitions/domain.User'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Get user profile
@@ -588,26 +710,26 @@ paths:
         name: profileInfo
         required: true
         schema:
-          $ref: '#/definitions/lissanai_com_backend_internal_domain.UpdateProfileRequest'
+          $ref: '#/definitions/domain.UpdateProfileRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.User'
+            $ref: '#/definitions/domain.User'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Update user profile
@@ -624,22 +746,22 @@ paths:
         name: tokenInfo
         required: true
         schema:
-          $ref: '#/definitions/lissanai_com_backend_internal_domain.PushTokenRequest'
+          $ref: '#/definitions/domain.PushTokenRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.MessageResponse'
+            $ref: '#/definitions/domain.MessageResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/lissanai_com_backend_internal_domain.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Register push token

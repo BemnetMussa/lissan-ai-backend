@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ForgotPasswordRequest"
+                            "$ref": "#/definitions/domain.ForgotPasswordRequest"
                         }
                     }
                 ],
@@ -43,13 +43,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.MessageResponse"
+                            "$ref": "#/definitions/domain.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -75,7 +75,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.LoginRequest"
+                            "$ref": "#/definitions/domain.LoginRequest"
                         }
                     }
                 ],
@@ -83,19 +83,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.AuthResponse"
+                            "$ref": "#/definitions/domain.AuthResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -125,7 +125,7 @@ const docTemplate = `{
                         "name": "refreshToken",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.RefreshTokenRequest"
+                            "$ref": "#/definitions/domain.RefreshTokenRequest"
                         }
                     }
                 ],
@@ -133,13 +133,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.MessageResponse"
+                            "$ref": "#/definitions/domain.MessageResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -165,7 +165,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.RefreshTokenRequest"
+                            "$ref": "#/definitions/domain.RefreshTokenRequest"
                         }
                     }
                 ],
@@ -173,19 +173,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.TokenResponse"
+                            "$ref": "#/definitions/domain.TokenResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -211,7 +211,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.RegisterRequest"
+                            "$ref": "#/definitions/domain.RegisterRequest"
                         }
                     }
                 ],
@@ -219,19 +219,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.AuthResponse"
+                            "$ref": "#/definitions/domain.AuthResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -257,7 +257,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ResetPasswordRequest"
+                            "$ref": "#/definitions/domain.ResetPasswordRequest"
                         }
                     }
                 ],
@@ -265,19 +265,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.MessageResponse"
+                            "$ref": "#/definitions/domain.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -303,7 +303,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.SocialAuthRequest"
+                            "$ref": "#/definitions/domain.SocialAuthRequest"
                         }
                     }
                 ],
@@ -311,19 +311,131 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.AuthResponse"
+                            "$ref": "#/definitions/domain.AuthResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/email/process": {
+            "post": {
+                "description": "Generates a new email or edits an existing one using AI. Set the 'type' field in the request body to 'GENERATE' or 'EDIT'.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Email"
+                ],
+                "summary": "Process Email Request",
+                "parameters": [
+                    {
+                        "description": "The user's request, including the type (GENERATE/EDIT), prompt, and optional tone.",
+                        "name": "emailRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.EmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.EmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/grammar/check": {
+            "post": {
+                "description": "Analyzes text for grammatical errors and returns corrections and explanations.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Grammar"
+                ],
+                "summary": "Check Grammar",
+                "parameters": [
+                    {
+                        "description": "Text to be checked",
+                        "name": "text",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.GrammarRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns corrected text and explanation",
+                        "schema": {
+                            "$ref": "#/definitions/models.GrammarResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 }
@@ -354,7 +466,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.SubmitAnswerRequest"
+                            "$ref": "#/definitions/models.SubmitAnswerRequest"
                         }
                     }
                 ],
@@ -362,19 +474,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Answer submitted successfully",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.Feedback"
+                            "$ref": "#/definitions/models.Feedback"
                         }
                     },
                     "400": {
                         "description": "Bad request",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -408,13 +520,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Next question returned",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.NextQuestionReturn"
+                            "$ref": "#/definitions/models.NextQuestionReturn"
                         }
                     },
                     "400": {
                         "description": "Bad request",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -442,19 +554,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.SessionReturn"
+                            "$ref": "#/definitions/models.SessionReturn"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -488,19 +600,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Session summary returned",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.SessionSummary"
+                            "$ref": "#/definitions/models.SessionSummary"
                         }
                     },
                     "400": {
                         "description": "Bad request",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -525,19 +637,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.User"
+                            "$ref": "#/definitions/domain.User"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -560,19 +672,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.MessageResponse"
+                            "$ref": "#/definitions/domain.MessageResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -601,7 +713,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.UpdateProfileRequest"
+                            "$ref": "#/definitions/domain.UpdateProfileRequest"
                         }
                     }
                 ],
@@ -609,25 +721,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.User"
+                            "$ref": "#/definitions/domain.User"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -658,7 +770,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.PushTokenRequest"
+                            "$ref": "#/definitions/domain.PushTokenRequest"
                         }
                     }
                 ],
@@ -666,19 +778,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.MessageResponse"
+                            "$ref": "#/definitions/domain.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                            "$ref": "#/definitions/domain.ErrorResponse"
                         }
                     }
                 }
@@ -686,7 +798,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "lissanai_com_backend_internal_domain.AuthResponse": {
+        "domain.AuthResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -699,11 +811,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/lissanai_com_backend_internal_domain.User"
+                    "$ref": "#/definitions/domain.User"
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.ErrorResponse": {
+        "domain.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
@@ -711,7 +823,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.ForgotPasswordRequest": {
+        "domain.ForgotPasswordRequest": {
             "type": "object",
             "required": [
                 "email"
@@ -723,7 +835,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.LoginRequest": {
+        "domain.LoginRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -740,7 +852,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.MessageResponse": {
+        "domain.MessageResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -748,7 +860,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.PushTokenRequest": {
+        "domain.PushTokenRequest": {
             "type": "object",
             "required": [
                 "platform",
@@ -765,7 +877,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.RefreshTokenRequest": {
+        "domain.RefreshTokenRequest": {
             "type": "object",
             "required": [
                 "refresh_token"
@@ -777,7 +889,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.RegisterRequest": {
+        "domain.RegisterRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -800,7 +912,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.ResetPasswordRequest": {
+        "domain.ResetPasswordRequest": {
             "type": "object",
             "required": [
                 "new_password",
@@ -818,7 +930,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.SocialAuthRequest": {
+        "domain.SocialAuthRequest": {
             "type": "object",
             "required": [
                 "access_token",
@@ -843,7 +955,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.TokenResponse": {
+        "domain.TokenResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -854,7 +966,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.UpdateProfileRequest": {
+        "domain.UpdateProfileRequest": {
             "type": "object",
             "properties": {
                 "name": {
@@ -867,7 +979,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain.User": {
+        "domain.User": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -894,7 +1006,64 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain_models.ErrorResponse": {
+        "entities.EmailRequest": {
+            "type": "object",
+            "required": [
+                "prompt"
+            ],
+            "properties": {
+                "prompt": {
+                    "type": "string"
+                },
+                "template_type": {
+                    "type": "string"
+                },
+                "tone": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.EmailResponse": {
+            "type": "object",
+            "properties": {
+                "generated_email": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.GrammarRequest": {
+            "type": "object",
+            "required": [
+                "text"
+            ],
+            "properties": {
+                "text": {
+                    "type": "string",
+                    "example": "he have two cats"
+                }
+            }
+        },
+        "models.Correction": {
+            "type": "object",
+            "properties": {
+                "corrected_phrase": {
+                    "type": "string"
+                },
+                "explanation": {
+                    "type": "string"
+                },
+                "original_phrase": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
@@ -902,13 +1071,13 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain_models.Feedback": {
+        "models.Feedback": {
             "type": "object",
             "properties": {
                 "feedback_points": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.FeedbackPoint"
+                        "$ref": "#/definitions/models.FeedbackPoint"
                     }
                 },
                 "overall_summary": {
@@ -919,7 +1088,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain_models.FeedbackPoint": {
+        "models.FeedbackPoint": {
             "type": "object",
             "properties": {
                 "focus_phrase": {
@@ -934,7 +1103,22 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain_models.NextQuestionReturn": {
+        "models.GrammarResponse": {
+            "type": "object",
+            "properties": {
+                "corrected_text": {
+                    "type": "string",
+                    "example": "He has two cats"
+                },
+                "corrections": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Correction"
+                    }
+                }
+            }
+        },
+        "models.NextQuestionReturn": {
             "type": "object",
             "properties": {
                 "question": {
@@ -942,7 +1126,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain_models.SessionReturn": {
+        "models.SessionReturn": {
             "type": "object",
             "properties": {
                 "question_number": {
@@ -953,7 +1137,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain_models.SessionSummary": {
+        "models.SessionSummary": {
             "type": "object",
             "properties": {
                 "completed": {
@@ -986,7 +1170,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lissanai_com_backend_internal_domain_models.SubmitAnswerRequest": {
+        "models.SubmitAnswerRequest": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -1013,10 +1197,10 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "lissan-ai-backend-dev.onrender.com",
+	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "LissanAI Professional API",
+	Title:            "LissanAI API",
 	Description:      "AI-powered English coach for Ethiopians seeking global job opportunities",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

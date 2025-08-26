@@ -49,10 +49,10 @@ func New() *gin.Engine {
 
 	jwtService := service.NewJWTService(jwtSecret)
 	passwordService := service.NewPasswordService()
-	apiKey := os.Getenv("API_KEY") // Replace with your actual API key or leave empty if using env var
+	apiKey := os.Getenv("GEMINI_API_KEY") // Replace with your actual API key or leave empty if using env var
 
 	// Create the AI service.
-	aiService, err := service.NewAiService(apiKey)
+	aiService, err := service.NewAiService()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,14 +68,13 @@ func New() *gin.Engine {
 	// --- Use Cases ---
 	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService)
 	userUsecase := usecase.NewUserUsecase(userRepo, refreshTokenRepo)
-	grammer_usecase := usecase.NewGrammerUsecase(aiService)
+	grammer_usecase := usecase.NewGrammarUsecase(aiService)
 	chat_usecase := usecase.NewChatUsecase(chatSessionRepo, chatMessageRepo, chatAiService)
 
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authUsecase)
 	userHandler := handler.NewUserHandler(userUsecase)
-	grammer_handler := handler.NewGrammarHandler(*grammer_usecase)
-	chat_handler := handler.NewChatHandler(chat_usecase)
+	grammer_handler := handler.NewGrammarHandler(grammer_usecase)
 	chat_handler := handler.NewChatHandler(chat_usecase)
 
 	// --- Middleware ---
