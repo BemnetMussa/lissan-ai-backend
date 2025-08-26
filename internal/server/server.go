@@ -36,6 +36,7 @@ func New() *gin.Engine {
 	
 	jwtService := service.NewJWTService(jwtSecret)
 	passwordService := service.NewPasswordService()
+	emailService := service.NewEmailService()
 
 	// --- Repositories ---
 	userRepo := repository.NewUserRepository(db)
@@ -43,7 +44,7 @@ func New() *gin.Engine {
 	passwordResetRepo := repository.NewPasswordResetRepository(db)
 
 	// --- Use Cases ---
-	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService)
+	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService, emailService)
 	userUsecase := usecase.NewUserUsecase(userRepo, refreshTokenRepo)
 
 	// --- Handlers ---

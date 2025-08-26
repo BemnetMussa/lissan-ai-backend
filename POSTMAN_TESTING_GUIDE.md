@@ -1,5 +1,31 @@
 # LissanAI API - Postman Testing Guide
 
+## 📧 Email Configuration (Optional)
+
+Before testing password reset functionality, you can configure email sending:
+
+1. **Copy environment template**:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Configure SMTP settings** in `.env`:
+   ```env
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_USERNAME=your-email@gmail.com
+   SMTP_PASSWORD=your-app-password
+   FROM_EMAIL=your-email@gmail.com
+   FRONTEND_URL=http://localhost:3000
+   ```
+
+3. **Test email functionality**:
+   ```bash
+   go run test_email.go
+   ```
+
+**Note**: If SMTP is not configured, password reset links will be printed to console instead.
+
 ## Server Information
 - **Base URL**: `http://localhost:8080`
 - **API Base Path**: `/api/v1`
