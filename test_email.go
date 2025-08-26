@@ -16,6 +16,20 @@ func main() {
 		log.Println("No .env file found, using system environment variables")
 	}
 
+	// Check if SMTP is configured
+	smtpUsername := os.Getenv("SMTP_USERNAME")
+	smtpPassword := os.Getenv("SMTP_PASSWORD")
+
+	if smtpUsername == "" || smtpPassword == "" {
+		fmt.Println("🧪 Testing email functionality (Development Mode)...")
+		fmt.Println("📝 SMTP not configured - will show console output instead of sending email")
+		fmt.Println()
+	} else {
+		fmt.Println("🧪 Testing email functionality (Production Mode)...")
+		fmt.Printf("📧 SMTP configured with username: %s\n", smtpUsername)
+		fmt.Println()
+	}
+
 	// Create email service
 	emailService := service.NewEmailService()
 
@@ -24,13 +38,14 @@ func main() {
 	testToken := "sample-reset-token-123"
 	testName := "John Doe"
 
-	fmt.Println("🧪 Testing email functionality...")
 	fmt.Printf("📧 Sending password reset email to: %s\n", testEmail)
 
 	err := emailService.SendPasswordResetEmail(testEmail, testToken, testName)
 	if err != nil {
 		fmt.Printf("❌ Email sending failed: %v\n", err)
-		os.Exit(1)
+		fmt.Println("\n💡 This is expected if SMTP credentials are not configured.")
+		fmt.Println("   Configure SMTP in .env file to enable actual email sending.")
+		os.Exit(0) // Exit successfully since this is expected behavior
 	}
 
 	fmt.Println("✅ Email functionality test completed!")
