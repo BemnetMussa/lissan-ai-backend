@@ -56,21 +56,20 @@ func New() *gin.Engine {
 	if err != nil {
 		log.Fatal(err)
 	}
-	chatAiService := service.NewChatAIService()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	chatAiService, _ := service.NewChatAiService(apiKey)
 
 	// --- Repositories ---
 	userRepo := repository.NewUserRepository(db)
 	refreshTokenRepo := repository.NewRefreshTokenRepository(db)
 	passwordResetRepo := repository.NewPasswordResetRepository(db)
+	chatSessionRepo := repository.NewMongoSessionRepo(db)
+	chatMessageRepo := repository.NewMongoMessageRepo(db)
 
 	// --- Use Cases ---
 	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService)
 	userUsecase := usecase.NewUserUsecase(userRepo, refreshTokenRepo)
 	grammer_usecase := usecase.NewGrammerUsecase(aiService)
-	chat_usecase := usecase.NewChatUsecase(chatAiService)
+	chat_usecase := usecase.NewChatUsecase(chatSessionRepo, chatMessageRepo, chatAiService)
 
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authUsecase)
@@ -102,8 +101,15 @@ func New() *gin.Engine {
 		{
 			grammar.POST("/", authMiddleware, grammer_handler.GrammarCheck)
 		}
-		chat := apiV1.Group("/chat")
-		chat.GET("/ws", chat_handler.HandleWebSocket)
+
+		// --- Chat/Interview routes ---
+		chatAPI := apiV1.Group("/interview")
+		{
+			chatAPI.POST("/start", authMiddleware, chat_handler.StartSessionHandler)
+			chatAPI.GET("/question", authMiddleware, chat_handler.GetNextQuestionHandler)
+			chatAPI.POST("/answer", authMiddleware, chat_handler.SubmitAnswerHandler)
+			chatAPI.POST("/:session_id/end", authMiddleware, chat_handler.EndSessionHandler)
+		}
 
 		// User routes (protected)
 		users := apiV1.Group("/users")

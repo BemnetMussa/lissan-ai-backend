@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.ForgotPasswordRequest"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ForgotPasswordRequest"
                         }
                     }
                 ],
@@ -43,13 +43,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.MessageResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -75,7 +75,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.LoginRequest"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.LoginRequest"
                         }
                     }
                 ],
@@ -83,19 +83,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.AuthResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.AuthResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -125,7 +125,7 @@ const docTemplate = `{
                         "name": "refreshToken",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/domain.RefreshTokenRequest"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.RefreshTokenRequest"
                         }
                     }
                 ],
@@ -133,13 +133,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.MessageResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.MessageResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -165,7 +165,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.RefreshTokenRequest"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.RefreshTokenRequest"
                         }
                     }
                 ],
@@ -173,19 +173,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.TokenResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.TokenResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -211,7 +211,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.RegisterRequest"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.RegisterRequest"
                         }
                     }
                 ],
@@ -219,19 +219,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.AuthResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.AuthResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -257,7 +257,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.ResetPasswordRequest"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ResetPasswordRequest"
                         }
                     }
                 ],
@@ -265,19 +265,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.MessageResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -303,7 +303,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.SocialAuthRequest"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.SocialAuthRequest"
                         }
                     }
                 ],
@@ -311,19 +311,196 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.AuthResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.AuthResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/interview/answer": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Submit an answer for the current session question",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Interview"
+                ],
+                "summary": "Submit user's answer",
+                "parameters": [
+                    {
+                        "description": "Answer input",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.SubmitAnswerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Answer submitted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.Feedback"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/interview/question": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves the next question for the current session",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Interview"
+                ],
+                "summary": "Get the next interview question",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "session_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Next question returned",
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.NextQuestionReturn"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/interview/start": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new interview session for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Interview"
+                ],
+                "summary": "Start a new interview session",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.SessionReturn"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/interview/{session_id}/end": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Ends the session and returns the final summary",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Interview"
+                ],
+                "summary": "End an interview session",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Session summary returned",
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.SessionSummary"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.ErrorResponse"
                         }
                     }
                 }
@@ -348,19 +525,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.User"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.User"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -383,19 +560,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.MessageResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.MessageResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -424,7 +601,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.UpdateProfileRequest"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.UpdateProfileRequest"
                         }
                     }
                 ],
@@ -432,25 +609,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.User"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.User"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -481,7 +658,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.PushTokenRequest"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.PushTokenRequest"
                         }
                     }
                 ],
@@ -489,19 +666,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.MessageResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/lissanai_com_backend_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -509,7 +686,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.AuthResponse": {
+        "lissanai_com_backend_internal_domain.AuthResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -522,11 +699,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/domain.User"
+                    "$ref": "#/definitions/lissanai_com_backend_internal_domain.User"
                 }
             }
         },
-        "domain.ErrorResponse": {
+        "lissanai_com_backend_internal_domain.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
@@ -534,7 +711,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.ForgotPasswordRequest": {
+        "lissanai_com_backend_internal_domain.ForgotPasswordRequest": {
             "type": "object",
             "required": [
                 "email"
@@ -546,7 +723,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.LoginRequest": {
+        "lissanai_com_backend_internal_domain.LoginRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -563,7 +740,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.MessageResponse": {
+        "lissanai_com_backend_internal_domain.MessageResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -571,7 +748,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.PushTokenRequest": {
+        "lissanai_com_backend_internal_domain.PushTokenRequest": {
             "type": "object",
             "required": [
                 "platform",
@@ -588,7 +765,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.RefreshTokenRequest": {
+        "lissanai_com_backend_internal_domain.RefreshTokenRequest": {
             "type": "object",
             "required": [
                 "refresh_token"
@@ -600,7 +777,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.RegisterRequest": {
+        "lissanai_com_backend_internal_domain.RegisterRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -623,7 +800,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.ResetPasswordRequest": {
+        "lissanai_com_backend_internal_domain.ResetPasswordRequest": {
             "type": "object",
             "required": [
                 "new_password",
@@ -641,7 +818,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.SocialAuthRequest": {
+        "lissanai_com_backend_internal_domain.SocialAuthRequest": {
             "type": "object",
             "required": [
                 "access_token",
@@ -666,7 +843,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.TokenResponse": {
+        "lissanai_com_backend_internal_domain.TokenResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -677,7 +854,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.UpdateProfileRequest": {
+        "lissanai_com_backend_internal_domain.UpdateProfileRequest": {
             "type": "object",
             "properties": {
                 "name": {
@@ -690,7 +867,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.User": {
+        "lissanai_com_backend_internal_domain.User": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -716,6 +893,111 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "lissanai_com_backend_internal_domain_models.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "lissanai_com_backend_internal_domain_models.Feedback": {
+            "type": "object",
+            "properties": {
+                "feedback_points": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/lissanai_com_backend_internal_domain_models.FeedbackPoint"
+                    }
+                },
+                "overall_summary": {
+                    "type": "string"
+                },
+                "score_percentage": {
+                    "type": "integer"
+                }
+            }
+        },
+        "lissanai_com_backend_internal_domain_models.FeedbackPoint": {
+            "type": "object",
+            "properties": {
+                "focus_phrase": {
+                    "type": "string"
+                },
+                "suggestion": {
+                    "type": "string"
+                },
+                "type": {
+                    "description": "grammar, pronunciation, structure",
+                    "type": "string"
+                }
+            }
+        },
+        "lissanai_com_backend_internal_domain_models.NextQuestionReturn": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "lissanai_com_backend_internal_domain_models.SessionReturn": {
+            "type": "object",
+            "properties": {
+                "question_number": {
+                    "type": "integer"
+                },
+                "session_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "lissanai_com_backend_internal_domain_models.SessionSummary": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "final_score": {
+                    "description": "out of 100",
+                    "type": "integer"
+                },
+                "session_id": {
+                    "type": "string"
+                },
+                "strengths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "total_questions": {
+                    "type": "integer"
+                },
+                "weaknesses": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "lissanai_com_backend_internal_domain_models.SubmitAnswerRequest": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string",
+                    "example": "My answer to the question"
+                },
+                "session_id": {
+                    "type": "string",
+                    "example": "13c70d60-8dab-4b08-b454-5225dcca1809"
+                }
+            }
         }
     },
     "securityDefinitions": {
@@ -731,7 +1013,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "lissan-ai-backend-dev.onrender.com",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "LissanAI Professional API",
