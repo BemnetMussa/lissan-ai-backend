@@ -34,7 +34,7 @@ func (h *ChatHandler) StartSessionHandler(c *gin.Context) {
 	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 	// 	return
 	// }
-	userID="123sdhfg"
+	userID :="123sdhfg"
 	session, err := h.usecase.StartSession(userID.Hex())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
