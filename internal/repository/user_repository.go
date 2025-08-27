@@ -216,8 +216,8 @@ func (r *passwordResetRepository) CreatePasswordReset(reset *domain.PasswordRese
 func (r *passwordResetRepository) GetPasswordReset(token string) (*domain.PasswordReset, error) {
 	var reset domain.PasswordReset
 	err := r.collection.FindOne(context.Background(), bson.M{
-		"token": token,
-		"used":  false,
+		"token":      token,
+		"used":       false,
 		"expires_at": bson.M{"$gt": time.Now()},
 	}).Decode(&reset)
 	if err != nil {
