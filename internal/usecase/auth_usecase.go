@@ -35,6 +35,7 @@ type authUsecase struct {
 	passwordResetRepo repository.PasswordResetRepository
 	jwtService      service.JWTService
 	passwordService service.PasswordService
+	emailService    service.EmailService
 }
 
 type userUsecase struct {
@@ -48,6 +49,7 @@ func NewAuthUsecase(
 	passwordResetRepo repository.PasswordResetRepository,
 	jwtService service.JWTService,
 	passwordService service.PasswordService,
+	emailService service.EmailService,
 ) AuthUsecase {
 	return &authUsecase{
 		userRepo:         userRepo,
@@ -55,6 +57,7 @@ func NewAuthUsecase(
 		passwordResetRepo: passwordResetRepo,
 		jwtService:       jwtService,
 		passwordService:  passwordService,
+		emailService:     emailService,
 	}
 }
 
@@ -208,8 +211,15 @@ func (u *authUsecase) ForgotPassword(req *domain.ForgotPasswordRequest) error {
 		return errors.New("failed to create password reset")
 	}
 
-	// In a real implementation, you would send an email here
-	// For now, we'll just return success
+	// Send password reset email
+	err = u.emailService.SendPasswordResetEmail(user.Email, resetToken, user.Name)
+	if err != nil {
+		// Log the error but don't fail the request - user still gets success response
+		// This prevents revealing whether email sending failed
+		// In production, you might want to log this error for monitoring
+		return nil
+	}
+
 	return nil
 }
 

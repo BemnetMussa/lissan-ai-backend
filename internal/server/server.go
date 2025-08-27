@@ -49,7 +49,8 @@ func New() *gin.Engine {
 
 	jwtService := service.NewJWTService(jwtSecret)
 	passwordService := service.NewPasswordService()
-	apiKey := os.Getenv("GEMINI_API_KEY") // Replace with your actual API key or leave empty if using env var
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	emailService := service.NewEmailService()
 
 	// Create the AI service.
 	aiService, err := service.NewAiService()
@@ -66,7 +67,7 @@ func New() *gin.Engine {
 	chatMessageRepo := repository.NewMongoMessageRepo(db)
 
 	// --- Use Cases ---
-	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService)
+	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService, emailService)
 	userUsecase := usecase.NewUserUsecase(userRepo, refreshTokenRepo)
 	grammer_usecase := usecase.NewGrammarUsecase(aiService)
 	chat_usecase := usecase.NewChatUsecase(chatSessionRepo, chatMessageRepo, chatAiService)
