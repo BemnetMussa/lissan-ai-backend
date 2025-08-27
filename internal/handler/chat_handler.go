@@ -29,12 +29,12 @@ func NewChatHandler(u *usecase.ChatUsecase) *ChatHandler {
 // @Security BearerAuth
 // @Router /interview/start [post]
 func (h *ChatHandler) StartSessionHandler(c *gin.Context) {
-	// userID, ok := middleware.GetUserIDFromContext(c)
-	// if !ok {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-	// 	return
-	// }
-	userID :="123sdhfg"
+	userID, ok := middleware.GetUserIDFromContext(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
 	session, err := h.usecase.StartSession(userID.Hex())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

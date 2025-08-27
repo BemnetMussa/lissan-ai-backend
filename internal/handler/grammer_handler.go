@@ -32,6 +32,7 @@ type GrammarRequest struct {
 // @Success      200 {object} models.GrammarResponse "Returns corrected text and explanation"
 // @Failure      400 {object} object{error=string}
 // @Failure      500 {object} object{error=string}
+// @Security BearerAuth
 // @Router       /grammar/check [post]
 func (h *GrammarHandler) GrammarCheck(c *gin.Context) {
 	var request GrammarRequest

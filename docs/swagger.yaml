@@ -541,6 +541,8 @@ paths:
               error:
                 type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Check Grammar
       tags:
       - Grammar
