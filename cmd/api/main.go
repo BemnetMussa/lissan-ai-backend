@@ -4,8 +4,9 @@ package main
 import (
 	"log"
 	"os"
-	
+
 	"github.com/joho/godotenv"
+	_ "lissanai.com/backend/docs" // <-- add this for swagger
 	"lissanai.com/backend/internal/server"
 	_ "lissanai.com/backend/docs" // <-- add this for swagger
 )
@@ -30,7 +31,7 @@ func main() {
 	if port == "" {
 		port = "8080" // Default to 8080 if the PORT environment variable is not set
 	}
-	
+
 	log.Printf("Starting LissanAI server on port %s", port)
 	server.Run(":" + port)
 }

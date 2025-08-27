@@ -8,9 +8,9 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
 	"lissanai.com/backend/internal/database"
 	"lissanai.com/backend/internal/handler"
-	
 	"lissanai.com/backend/internal/middleware"
 	"lissanai.com/backend/internal/repository"
 	"lissanai.com/backend/internal/service"
@@ -49,6 +49,7 @@ func New() *gin.Engine {
 
 	jwtService := service.NewJWTService(jwtSecret)
 	passwordService := service.NewPasswordService()
+	apiKey := os.Getenv("GEMINI_API_KEY")
 	emailService := service.NewEmailService()
 
 	// Create the AI service.
@@ -56,21 +57,27 @@ func New() *gin.Engine {
 	if err != nil {
 		log.Fatal(err)
 	}
+	chatAiService, _ := service.NewChatAiService(apiKey)
 
 	// --- Repositories ---
 	userRepo := repository.NewUserRepository(db)
 	refreshTokenRepo := repository.NewRefreshTokenRepository(db)
 	passwordResetRepo := repository.NewPasswordResetRepository(db)
+	chatSessionRepo := repository.NewMongoSessionRepo(db)
+	chatMessageRepo := repository.NewMongoMessageRepo(db)
 
 	// --- Use Cases ---
 	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService, emailService)
 	userUsecase := usecase.NewUserUsecase(userRepo, refreshTokenRepo)
+	grammer_usecase := usecase.NewGrammarUsecase(aiService)
+	chat_usecase := usecase.NewChatUsecase(chatSessionRepo, chatMessageRepo, chatAiService)
 
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authUsecase)
 	userHandler := handler.NewUserHandler(userUsecase)
-	grammarUsecase := usecase.NewGrammarUsecase(aiService)
-	grammarHandler := handler.NewGrammarHandler(grammarUsecase)
+	grammer_handler := handler.NewGrammarHandler(grammer_usecase)
+	chat_handler := handler.NewChatHandler(chat_usecase)
+
 	// --- Middleware ---
 	authMiddleware := middleware.AuthMiddleware(jwtService)
 
@@ -91,10 +98,20 @@ func New() *gin.Engine {
 			auth.POST("/logout", authMiddleware, authHandler.Logout)
 		}
 
-		grammar := apiV1.Group("/grammar")
+		grammar := apiV1.Group("/grammar/check")
 		{
-			grammar.POST("/check", grammarHandler.GrammarCheck) // no auth middleware for Swagger testing
+			grammar.POST("/", authMiddleware, grammer_handler.GrammarCheck)
 		}
+
+		// --- Chat/Interview routes ---
+		chatAPI := apiV1.Group("/interview")
+		{
+			chatAPI.POST("/start", authMiddleware, chat_handler.StartSessionHandler)
+			chatAPI.GET("/question", authMiddleware, chat_handler.GetNextQuestionHandler)
+			chatAPI.POST("/answer", authMiddleware, chat_handler.SubmitAnswerHandler)
+			chatAPI.POST("/:session_id/end", authMiddleware, chat_handler.EndSessionHandler)
+		}
+
 		// User routes (protected)
 		users := apiV1.Group("/users")
 		users.Use(authMiddleware)
@@ -105,8 +122,11 @@ func New() *gin.Engine {
 			users.POST("/me/push-token", userHandler.AddPushToken)
 		}
 
-		// --- Register AI Email Route ---
-		SetupEmailRoutes(apiV1)
+		// Future routes for other features
+		// interviews := apiV1.Group("/interviews")
+		// grammar := apiV1.Group("/grammar")
+		// pronunciation := apiV1.Group("/pronunciation")
+		// learning := apiV1.Group("/learning")
 	}
 
 	// --- Swagger ---

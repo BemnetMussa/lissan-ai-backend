@@ -171,13 +171,92 @@ definitions:
     required:
     - text
     type: object
+  models.Correction:
+    properties:
+      corrected_phrase:
+        type: string
+      explanation:
+        type: string
+      original_phrase:
+        type: string
+    type: object
+  models.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  models.Feedback:
+    properties:
+      feedback_points:
+        items:
+          $ref: '#/definitions/models.FeedbackPoint'
+        type: array
+      overall_summary:
+        type: string
+      score_percentage:
+        type: integer
+    type: object
+  models.FeedbackPoint:
+    properties:
+      focus_phrase:
+        type: string
+      suggestion:
+        type: string
+      type:
+        description: grammar, pronunciation, structure
+        type: string
+    type: object
   models.GrammarResponse:
     properties:
       corrected_text:
         example: He has two cats
         type: string
-      explanation:
-        example: Corrected verb agreement
+      corrections:
+        items:
+          $ref: '#/definitions/models.Correction'
+        type: array
+    type: object
+  models.NextQuestionReturn:
+    properties:
+      question:
+        type: string
+    type: object
+  models.SessionReturn:
+    properties:
+      question_number:
+        type: integer
+      session_id:
+        type: string
+    type: object
+  models.SessionSummary:
+    properties:
+      completed:
+        type: integer
+      created_at:
+        type: integer
+      final_score:
+        description: out of 100
+        type: integer
+      session_id:
+        type: string
+      strengths:
+        items:
+          type: string
+        type: array
+      total_questions:
+        type: integer
+      weaknesses:
+        items:
+          type: string
+        type: array
+    type: object
+  models.SubmitAnswerRequest:
+    properties:
+      answer:
+        example: My answer to the question
+        type: string
+      session_id:
+        example: 13c70d60-8dab-4b08-b454-5225dcca1809
         type: string
     type: object
 host: localhost:8080
@@ -465,6 +544,117 @@ paths:
       summary: Check Grammar
       tags:
       - Grammar
+  /interview/{session_id}/end:
+    post:
+      description: Ends the session and returns the final summary
+      parameters:
+      - description: Session ID
+        in: path
+        name: session_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Session summary returned
+          schema:
+            $ref: '#/definitions/models.SessionSummary'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: End an interview session
+      tags:
+      - Interview
+  /interview/answer:
+    post:
+      consumes:
+      - application/json
+      description: Submit an answer for the current session question
+      parameters:
+      - description: Answer input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.SubmitAnswerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Answer submitted successfully
+          schema:
+            $ref: '#/definitions/models.Feedback'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Submit user's answer
+      tags:
+      - Interview
+  /interview/question:
+    get:
+      description: Retrieves the next question for the current session
+      parameters:
+      - description: Session ID
+        in: query
+        name: session_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Next question returned
+          schema:
+            $ref: '#/definitions/models.NextQuestionReturn'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get the next interview question
+      tags:
+      - Interview
+  /interview/start:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new interview session for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SessionReturn'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Start a new interview session
+      tags:
+      - Interview
   /users/me:
     delete:
       description: Allow a user to delete their account
