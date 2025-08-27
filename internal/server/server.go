@@ -106,10 +106,15 @@ func New() *gin.Engine {
 		// --- Chat/Interview routes ---
 		chatAPI := apiV1.Group("/interview")
 		{
-			chatAPI.POST("/start", authMiddleware, chat_handler.StartSessionHandler)
-			chatAPI.GET("/question", authMiddleware, chat_handler.GetNextQuestionHandler)
-			chatAPI.POST("/answer", authMiddleware, chat_handler.SubmitAnswerHandler)
-			chatAPI.POST("/:session_id/end", authMiddleware, chat_handler.EndSessionHandler)
+			// chatAPI.POST("/start", authMiddleware, chat_handler.StartSessionHandler)
+			// chatAPI.GET("/question", authMiddleware, chat_handler.GetNextQuestionHandler)
+			// chatAPI.POST("/answer", authMiddleware, chat_handler.SubmitAnswerHandler)
+			// chatAPI.POST("/:session_id/end", authMiddleware, chat_handler.EndSessionHandler)
+
+			 chatAPI.POST("/start", chat_handler.StartSessionHandler)
+			 chatAPI.GET("/question", chat_handler.GetNextQuestionHandler)
+			 chatAPI.POST("/answer", chat_handler.SubmitAnswerHandler)
+			 chatAPI.POST("/:session_id/end", chat_handler.EndSessionHandler)
 		}
 
 		// User routes (protected)
