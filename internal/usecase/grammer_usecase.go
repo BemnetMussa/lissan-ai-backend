@@ -12,9 +12,8 @@ type GrammarUsecase struct {
 
 // usecase/grammar_usecase.go
 func NewGrammarUsecase(aiService interfaces.AiServiceInterface) *GrammarUsecase {
-    return &GrammarUsecase{AiService: aiService}
+	return &GrammarUsecase{AiService: aiService}
 }
-
 
 func (g *GrammarUsecase) CheckGrammar(text string) (*models.GrammarResponse, error) {
 	return g.AiService.CheckGrammar(text)

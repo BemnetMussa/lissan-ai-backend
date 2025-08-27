@@ -435,6 +435,183 @@
                 }
             }
         },
+        "/interview/answer": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Submit an answer for the current session question",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Interview"
+                ],
+                "summary": "Submit user's answer",
+                "parameters": [
+                    {
+                        "description": "Answer input",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SubmitAnswerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Answer submitted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.Feedback"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/interview/question": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves the next question for the current session",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Interview"
+                ],
+                "summary": "Get the next interview question",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "session_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Next question returned",
+                        "schema": {
+                            "$ref": "#/definitions/models.NextQuestionReturn"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/interview/start": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new interview session for the authenticated user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Interview"
+                ],
+                "summary": "Start a new interview session",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SessionReturn"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/interview/{session_id}/end": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Ends the session and returns the final summary",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Interview"
+                ],
+                "summary": "End an interview session",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "session_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Session summary returned",
+                        "schema": {
+                            "$ref": "#/definitions/models.SessionSummary"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users/me": {
             "get": {
                 "security": [
@@ -866,6 +1043,60 @@
                 }
             }
         },
+        "models.Correction": {
+            "type": "object",
+            "properties": {
+                "corrected_phrase": {
+                    "type": "string"
+                },
+                "explanation": {
+                    "type": "string"
+                },
+                "original_phrase": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Feedback": {
+            "type": "object",
+            "properties": {
+                "feedback_points": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.FeedbackPoint"
+                    }
+                },
+                "overall_summary": {
+                    "type": "string"
+                },
+                "score_percentage": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.FeedbackPoint": {
+            "type": "object",
+            "properties": {
+                "focus_phrase": {
+                    "type": "string"
+                },
+                "suggestion": {
+                    "type": "string"
+                },
+                "type": {
+                    "description": "grammar, pronunciation, structure",
+                    "type": "string"
+                }
+            }
+        },
         "models.GrammarResponse": {
             "type": "object",
             "properties": {
@@ -873,9 +1104,76 @@
                     "type": "string",
                     "example": "He has two cats"
                 },
-                "explanation": {
+                "corrections": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Correction"
+                    }
+                }
+            }
+        },
+        "models.NextQuestionReturn": {
+            "type": "object",
+            "properties": {
+                "question": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SessionReturn": {
+            "type": "object",
+            "properties": {
+                "question_number": {
+                    "type": "integer"
+                },
+                "session_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SessionSummary": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "final_score": {
+                    "description": "out of 100",
+                    "type": "integer"
+                },
+                "session_id": {
+                    "type": "string"
+                },
+                "strengths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "total_questions": {
+                    "type": "integer"
+                },
+                "weaknesses": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.SubmitAnswerRequest": {
+            "type": "object",
+            "properties": {
+                "answer": {
                     "type": "string",
-                    "example": "Corrected verb agreement"
+                    "example": "My answer to the question"
+                },
+                "session_id": {
+                    "type": "string",
+                    "example": "13c70d60-8dab-4b08-b454-5225dcca1809"
                 }
             }
         }
