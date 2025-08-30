@@ -110,6 +110,7 @@ func New() *gin.Engine {
 			chatAPI.GET("/question", authMiddleware, chat_handler.GetNextQuestionHandler)
 			chatAPI.POST("/answer", authMiddleware, chat_handler.SubmitAnswerHandler)
 			chatAPI.POST("/:session_id/end", authMiddleware, chat_handler.EndSessionHandler)
+
 		}
 
 		// User routes (protected)
@@ -122,11 +123,17 @@ func New() *gin.Engine {
 			users.POST("/me/push-token", userHandler.AddPushToken)
 		}
 
+		// Email routes (protected)
+		emailGroup := apiV1.Group("/")
+		_ = SetupEmailRoutes(emailGroup)
 		// Future routes for other features
 		// interviews := apiV1.Group("/interviews")
 		// grammar := apiV1.Group("/grammar")
 		// pronunciation := apiV1.Group("/pronunciation")
 		// learning := apiV1.Group("/learning")
+
+		// Free Speaking route
+		SetupSpeakingRoutes(apiV1)
 	}
 
 	// --- Swagger ---

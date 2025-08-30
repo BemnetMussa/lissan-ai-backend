@@ -387,6 +387,11 @@ const docTemplate = `{
         },
         "/grammar/check": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Analyzes text for grammatical errors and returns corrections and explanations.",
                 "consumes": [
                     "application/json"

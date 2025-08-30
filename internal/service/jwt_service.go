@@ -30,10 +30,11 @@ type Claims struct {
 func NewJWTService(secretKey string) JWTService {
 	return &jwtService{
 		secretKey:       secretKey,
-		accessTokenTTL:  15 * time.Minute,
-		refreshTokenTTL: 7 * 24 * time.Hour,
+		accessTokenTTL:  7 * 24 * time.Hour,  // 7 days
+		refreshTokenTTL: 14 * 24 * time.Hour,  // 14 days
 	}
 }
+
 
 func (s *jwtService) GenerateAccessToken(userID primitive.ObjectID) (string, error) {
 	claims := Claims{
