@@ -143,7 +143,25 @@ definitions:
       updated_at:
         type: string
     type: object
-  entities.EmailRequest:
+  entities.EditEmailRequest:
+    properties:
+      draft:
+        type: string
+      template_type:
+        type: string
+      tone:
+        type: string
+    required:
+    - draft
+    type: object
+  entities.EmailResponse:
+    properties:
+      body:
+        type: string
+      subject:
+        type: string
+    type: object
+  entities.GenerateEmailRequest:
     properties:
       prompt:
         type: string
@@ -151,17 +169,8 @@ definitions:
         type: string
       tone:
         type: string
-      type:
-        type: string
     required:
     - prompt
-    type: object
-  entities.EmailResponse:
-    properties:
-      generated_email:
-        type: string
-      subject:
-        type: string
     type: object
   handler.GrammarRequest:
     properties:
@@ -259,7 +268,7 @@ definitions:
         example: 13c70d60-8dab-4b08-b454-5225dcca1809
         type: string
     type: object
-host: localhost:8080
+host: lissan-ai-backend-dev.onrender.com
 info:
   contact: {}
   description: AI-powered English coach for Ethiopians seeking global job opportunities
@@ -469,20 +478,18 @@ paths:
       summary: Social authentication
       tags:
       - Auth
-  /email/process:
+  /email/edit:
     post:
       consumes:
       - application/json
-      description: Generates a new email or edits an existing one using AI. Set the
-        'type' field in the request body to 'GENERATE' or 'EDIT'.
+      description: Corrects and improves a user's drafted email to make it more professional.
       parameters:
-      - description: The user's request, including the type (GENERATE/EDIT), prompt,
-          and optional tone.
+      - description: The user's email draft and optional tone/template.
         in: body
-        name: emailRequest
+        name: editRequest
         required: true
         schema:
-          $ref: '#/definitions/entities.EmailRequest'
+          $ref: '#/definitions/entities.EditEmailRequest'
       produces:
       - application/json
       responses:
@@ -504,7 +511,44 @@ paths:
               error:
                 type: string
             type: object
-      summary: Process Email Request
+      summary: Edit an existing email
+      tags:
+      - Email
+  /email/generate:
+    post:
+      consumes:
+      - application/json
+      description: Generates a complete, professional email from a user's prompt (which
+        can be in English or Amharic).
+      parameters:
+      - description: The user's prompt and optional tone/template.
+        in: body
+        name: generateRequest
+        required: true
+        schema:
+          $ref: '#/definitions/entities.GenerateEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.EmailResponse'
+        "400":
+          description: Bad Request
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Generate a new email
       tags:
       - Email
   /grammar/check:

@@ -40,23 +40,23 @@ func (s *emailService) SendPasswordResetEmail(email, resetToken, userName string
 	}
 
 	resetURL := fmt.Sprintf("%s/reset-password?token=%s", s.frontendURL, resetToken)
-	
+
 	subject := "Reset Your LissanAI Password"
 	body := s.generatePasswordResetHTML(userName, resetURL)
-	
+
 	return s.sendEmail(email, subject, body)
 }
 
 func (s *emailService) sendEmail(to, subject, body string) error {
 	auth := smtp.PlainAuth("", s.smtpUsername, s.smtpPassword, s.smtpHost)
-	
+
 	msg := fmt.Sprintf("To: %s\r\n"+
 		"Subject: %s\r\n"+
 		"MIME-Version: 1.0\r\n"+
 		"Content-Type: text/html; charset=UTF-8\r\n"+
 		"\r\n"+
 		"%s", to, subject, body)
-	
+
 	addr := fmt.Sprintf("%s:%s", s.smtpHost, s.smtpPort)
 	return smtp.SendMail(addr, auth, s.fromEmail, []string{to}, []byte(msg))
 }

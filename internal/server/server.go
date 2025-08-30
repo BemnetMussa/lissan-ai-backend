@@ -124,6 +124,7 @@ func New() *gin.Engine {
 		}
 
 		// Email routes (protected)
+
 		emailGroup := apiV1.Group("/")
 		_ = SetupEmailRoutes(emailGroup)
 		// Future routes for other features
@@ -135,6 +136,11 @@ func New() *gin.Engine {
 		// Free Speaking route
 		SetupSpeakingRoutes(apiV1)
 	}
+	// Future routes for other features
+	// interviews := apiV1.Group("/interviews")
+	// grammar := apiV1.Group("/grammar")
+	// pronunciation := apiV1.Group("/pronunciation")
+	// learning := apiV1.Group("/learning")
 
 	// --- Swagger ---
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

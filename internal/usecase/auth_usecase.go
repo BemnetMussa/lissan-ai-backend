@@ -30,16 +30,16 @@ type UserUsecase interface {
 }
 
 type authUsecase struct {
-	userRepo        repository.UserRepository
-	refreshTokenRepo repository.RefreshTokenRepository
+	userRepo          repository.UserRepository
+	refreshTokenRepo  repository.RefreshTokenRepository
 	passwordResetRepo repository.PasswordResetRepository
-	jwtService      service.JWTService
-	passwordService service.PasswordService
-	emailService    service.EmailService
+	jwtService        service.JWTService
+	passwordService   service.PasswordService
+	emailService      service.EmailService
 }
 
 type userUsecase struct {
-	userRepo repository.UserRepository
+	userRepo         repository.UserRepository
 	refreshTokenRepo repository.RefreshTokenRepository
 }
 
@@ -52,12 +52,12 @@ func NewAuthUsecase(
 	emailService service.EmailService,
 ) AuthUsecase {
 	return &authUsecase{
-		userRepo:         userRepo,
-		refreshTokenRepo: refreshTokenRepo,
+		userRepo:          userRepo,
+		refreshTokenRepo:  refreshTokenRepo,
 		passwordResetRepo: passwordResetRepo,
-		jwtService:       jwtService,
-		passwordService:  passwordService,
-		emailService:     emailService,
+		jwtService:        jwtService,
+		passwordService:   passwordService,
+		emailService:      emailService,
 	}
 }
 
@@ -197,7 +197,7 @@ func (u *authUsecase) ForgotPassword(req *domain.ForgotPasswordRequest) error {
 
 	// Generate reset token
 	resetToken := uuid.New().String()
-	
+
 	// Create password reset record
 	passwordReset := &domain.PasswordReset{
 		UserID:    user.ID,
@@ -342,7 +342,7 @@ func (u *userUsecase) UpdateProfile(userID primitive.ObjectID, req *domain.Updat
 func (u *userUsecase) DeleteAccount(userID primitive.ObjectID) error {
 	// Delete all refresh tokens
 	u.refreshTokenRepo.DeleteUserRefreshTokens(userID)
-	
+
 	// Delete user
 	return u.userRepo.DeleteUser(userID)
 }
