@@ -124,7 +124,17 @@ func New() *gin.Engine {
 		}
 
 		// Email routes (protected)
-		SetupEmailRoutes(apiV1)
+
+		emailGroup := apiV1.Group("/")
+		_ = SetupEmailRoutes(emailGroup)
+		// Future routes for other features
+		// interviews := apiV1.Group("/interviews")
+		// grammar := apiV1.Group("/grammar")
+		// pronunciation := apiV1.Group("/pronunciation")
+		// learning := apiV1.Group("/learning")
+
+		// Free Speaking route
+		SetupSpeakingRoutes(apiV1)
 	}
 	// Future routes for other features
 	// interviews := apiV1.Group("/interviews")
