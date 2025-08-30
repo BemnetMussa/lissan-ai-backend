@@ -126,7 +126,7 @@ func New() *gin.Engine {
 		// Email routes (protected)
 
 		emailGroup := apiV1.Group("/")
-		_ = SetupEmailRoutes(emailGroup)
+		SetupEmailRoutes(emailGroup)
 		// Future routes for other features
 		// interviews := apiV1.Group("/interviews")
 		// grammar := apiV1.Group("/grammar")
@@ -139,7 +139,7 @@ func New() *gin.Engine {
 	// Future routes for other features
 	// interviews := apiV1.Group("/interviews")
 	// grammar := apiV1.Group("/grammar")
-	// pronunciation := apiV1.Group("/pronunciation")
+	// pronunciation := apiV1.Group("/pronunciation")[]
 	// learning := apiV1.Group("/learning")
 
 	// --- Swagger ---
