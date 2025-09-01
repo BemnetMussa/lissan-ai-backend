@@ -58,7 +58,7 @@ func (u *learningUsecase) GetAllLearningPaths(userID primitive.ObjectID) ([]*dom
 func (u *learningUsecase) EnrollInPath(userID primitive.ObjectID, req *domain.EnrollPathRequest) error {
 	pathID, err := primitive.ObjectIDFromHex(req.PathID)
 	if err != nil {
-		return errors.New("invalid path ID")
+		return errors.New("learning path not found")
 	}
 
 	// Check if path exists
@@ -85,7 +85,7 @@ func (u *learningUsecase) EnrollInPath(userID primitive.ObjectID, req *domain.En
 func (u *learningUsecase) GetUserProgress(userID primitive.ObjectID, pathID string) (*domain.ProgressResponse, error) {
 	pathOID, err := primitive.ObjectIDFromHex(pathID)
 	if err != nil {
-		return nil, errors.New("invalid path ID")
+		return nil, errors.New("user not enrolled in this path")
 	}
 
 	progress, err := u.learningRepo.GetUserProgress(userID, pathOID)
@@ -113,7 +113,7 @@ func (u *learningUsecase) GetUserProgress(userID primitive.ObjectID, pathID stri
 func (u *learningUsecase) GetLesson(userID primitive.ObjectID, lessonID string) (*domain.LessonResponse, error) {
 	lessonOID, err := primitive.ObjectIDFromHex(lessonID)
 	if err != nil {
-		return nil, errors.New("invalid lesson ID")
+		return nil, errors.New("lesson not found")
 	}
 
 	lesson, err := u.learningRepo.GetLessonByID(lessonOID)
@@ -161,7 +161,7 @@ func (u *learningUsecase) GetLesson(userID primitive.ObjectID, lessonID string) 
 func (u *learningUsecase) CompleteLesson(userID primitive.ObjectID, req *domain.CompleteLessonRequest) error {
 	lessonOID, err := primitive.ObjectIDFromHex(req.LessonID)
 	if err != nil {
-		return errors.New("invalid lesson ID")
+		return errors.New("lesson not found")
 	}
 
 	lesson, err := u.learningRepo.GetLessonByID(lessonOID)
@@ -198,7 +198,7 @@ func (u *learningUsecase) CompleteLesson(userID primitive.ObjectID, req *domain.
 func (u *learningUsecase) SubmitQuiz(userID primitive.ObjectID, req *domain.QuizSubmissionRequest) (*domain.QuizResultResponse, error) {
 	quizOID, err := primitive.ObjectIDFromHex(req.QuizID)
 	if err != nil {
-		return nil, errors.New("invalid quiz ID")
+		return nil, errors.New("quiz not found")
 	}
 
 	quiz, err := u.learningRepo.GetQuizByID(quizOID)
