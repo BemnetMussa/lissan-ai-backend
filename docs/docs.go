@@ -856,6 +856,23 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/ws/conversation": {
+            "get": {
+                "description": "Establishes a WebSocket for a real-time, voice-based conversation with an AI. The connection automatically terminates after 3 minutes.\n\n### Conversation Lifecycle:\n1. **Connect**: The client establishes a WebSocket connection to this endpoint.\n2. **Speak**: The user speaks. The client continuously streams their voice as binary audio messages.\n3. **Pause**: The user stops speaking. After ~2-3 seconds of silence, the client sends a final text message.\n4. **Process**: The server receives the signal and immediately sends back a text message ` + "`" + `{\"status\": \"processing\"}` + "`" + `. The frontend UI should update to show this.\n5. **Respond**: The server, after finishing the AI processing, sends the AI's spoken response back as a single binary audio message. The frontend plays this audio.\n6. **Repeat**: The process repeats from step 2.\n7. **Timeout**: The connection is automatically and forcefully closed by the server after 3 minutes.\n\n### Client Responsibilities:\n- **Must** stream user's voice as raw ` + "`" + `BinaryMessage` + "`" + ` chunks.\n- **Must** implement silence detection (~2-3 seconds).\n- **Must** send a ` + "`" + `TextMessage` + "`" + ` with the JSON ` + "`" + `{\"type\": \"end_of_speech\"}` + "`" + ` after detecting silence.\n- **Must** handle incoming ` + "`" + `TextMessage` + "`" + ` status updates (e.g., ` + "`" + `{\"status\": \"processing\"}` + "`" + `) to update the UI.\n- **Must** be able to receive and play back ` + "`" + `BinaryMessage` + "`" + ` audio from the server.",
+                "tags": [
+                    "Conversation"
+                ],
+                "summary": "Real-time AI Voice Conversation",
+                "responses": {
+                    "101": {
+                        "description": "Switching Protocols",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1272,7 +1289,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "lissan-ai-backend-dev.onrender.com",
+	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "LissanAI API",

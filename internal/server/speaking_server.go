@@ -27,6 +27,7 @@ func SetupSpeakingRoutes(router *gin.RouterGroup) {
 	whisperClient := client.NewWhisperClient(hfAPIKey)
 	elevenLabsClient := client.NewElevenLabsTTSClient(elevenLabsKey, voiceID)
 
+    // This now returns the interface type, which is what the handler expects.
 	speakingService := service.NewSpeakingService(groqClient, whisperClient, elevenLabsClient)
 	conversationHandler := handler.NewConversationHandler(speakingService)
 

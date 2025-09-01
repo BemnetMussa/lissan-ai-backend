@@ -449,7 +449,7 @@ definitions:
         example: 13c70d60-8dab-4b08-b454-5225dcca1809
         type: string
     type: object
-host: lissan-ai-backend-dev.onrender.com
+host: localhost:8080
 info:
   contact: {}
   description: AI-powered English coach for Ethiopians seeking global job opportunities
@@ -994,6 +994,36 @@ paths:
       summary: Register push token
       tags:
       - Users
+
+  /ws/conversation:
+    get:
+      description: |-
+        Establishes a WebSocket for a real-time, voice-based conversation with an AI. The connection automatically terminates after 3 minutes.
+
+        ### Conversation Lifecycle:
+        1. **Connect**: The client establishes a WebSocket connection to this endpoint.
+        2. **Speak**: The user speaks. The client continuously streams their voice as binary audio messages.
+        3. **Pause**: The user stops speaking. After ~2-3 seconds of silence, the client sends a final text message.
+        4. **Process**: The server receives the signal and immediately sends back a text message `{"status": "processing"}`. The frontend UI should update to show this.
+        5. **Respond**: The server, after finishing the AI processing, sends the AI's spoken response back as a single binary audio message. The frontend plays this audio.
+        6. **Repeat**: The process repeats from step 2.
+        7. **Timeout**: The connection is automatically and forcefully closed by the server after 3 minutes.
+
+        ### Client Responsibilities:
+        - **Must** stream user's voice as raw `BinaryMessage` chunks.
+        - **Must** implement silence detection (~2-3 seconds).
+        - **Must** send a `TextMessage` with the JSON `{"type": "end_of_speech"}` after detecting silence.
+        - **Must** handle incoming `TextMessage` status updates (e.g., `{"status": "processing"}`) to update the UI.
+        - **Must** be able to receive and play back `BinaryMessage` audio from the server.
+      responses:
+        "101":
+          description: Switching Protocols
+          schema:
+            type: string
+      summary: Real-time AI Voice Conversation
+      tags:
+      - Conversation
+
   /learning/paths:
     get:
       description: Retrieve all available learning paths with user progress if enrolled
