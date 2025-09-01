@@ -105,3 +105,127 @@ type PasswordReset struct {
 	CreatedAt time.Time         `bson:"created_at"`
 	Used      bool              `bson:"used"`
 }
+
+// Learning Path Models
+type LearningPath struct {
+	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Title       string            `json:"title" bson:"title"`
+	Description string            `json:"description" bson:"description"`
+	Level       string            `json:"level" bson:"level"` // beginner, intermediate, advanced
+	Category    string            `json:"category" bson:"category"`
+	Duration    int               `json:"duration" bson:"duration"` // in minutes
+	LessonIDs   []primitive.ObjectID `json:"lesson_ids" bson:"lesson_ids"`
+	CreatedAt   time.Time         `json:"created_at" bson:"created_at"`
+	UpdatedAt   time.Time         `json:"updated_at" bson:"updated_at"`
+}
+
+type Lesson struct {
+	ID          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	PathID      primitive.ObjectID `json:"path_id" bson:"path_id"`
+	Title       string            `json:"title" bson:"title"`
+	Description string            `json:"description" bson:"description"`
+	Content     string            `json:"content" bson:"content"`
+	Type        string            `json:"type" bson:"type"` // video, text, quiz, exercise
+	Duration    int               `json:"duration" bson:"duration"` // in minutes
+	Order       int               `json:"order" bson:"order"`
+	QuizID      *primitive.ObjectID `json:"quiz_id,omitempty" bson:"quiz_id,omitempty"`
+	CreatedAt   time.Time         `json:"created_at" bson:"created_at"`
+	UpdatedAt   time.Time         `json:"updated_at" bson:"updated_at"`
+}
+
+type Quiz struct {
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	LessonID  primitive.ObjectID `json:"lesson_id" bson:"lesson_id"`
+	Title     string            `json:"title" bson:"title"`
+	Questions []Question        `json:"questions" bson:"questions"`
+	CreatedAt time.Time         `json:"created_at" bson:"created_at"`
+	UpdatedAt time.Time         `json:"updated_at" bson:"updated_at"`
+}
+
+type Question struct {
+	ID      string   `json:"id" bson:"id"`
+	Text    string   `json:"text" bson:"text"`
+	Type    string   `json:"type" bson:"type"` // multiple_choice, true_false, text
+	Options []string `json:"options,omitempty" bson:"options,omitempty"`
+	Correct string   `json:"correct" bson:"correct"`
+	Points  int      `json:"points" bson:"points"`
+}
+
+type UserProgress struct {
+	ID               primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	UserID           primitive.ObjectID `json:"user_id" bson:"user_id"`
+	PathID           primitive.ObjectID `json:"path_id" bson:"path_id"`
+	CompletedLessons []primitive.ObjectID `json:"completed_lessons" bson:"completed_lessons"`
+	CurrentLesson    *primitive.ObjectID `json:"current_lesson,omitempty" bson:"current_lesson,omitempty"`
+	Progress         float64           `json:"progress" bson:"progress"` // percentage 0-100
+	EnrolledAt       time.Time         `json:"enrolled_at" bson:"enrolled_at"`
+	LastAccessedAt   time.Time         `json:"last_accessed_at" bson:"last_accessed_at"`
+}
+
+type QuizSubmission struct {
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	UserID    primitive.ObjectID `json:"user_id" bson:"user_id"`
+	QuizID    primitive.ObjectID `json:"quiz_id" bson:"quiz_id"`
+	LessonID  primitive.ObjectID `json:"lesson_id" bson:"lesson_id"`
+	Answers   map[string]string  `json:"answers" bson:"answers"` // question_id -> answer
+	Score     float64           `json:"score" bson:"score"`
+	MaxScore  int               `json:"max_score" bson:"max_score"`
+	Passed    bool              `json:"passed" bson:"passed"`
+	CreatedAt time.Time         `json:"created_at" bson:"created_at"`
+}
+
+// Learning Request/Response Models
+type EnrollPathRequest struct {
+	PathID string `json:"path_id" binding:"required"`
+}
+
+type CompleteLessonRequest struct {
+	LessonID string `json:"lesson_id" binding:"required"`
+}
+
+type QuizSubmissionRequest struct {
+	QuizID  string            `json:"quiz_id" binding:"required"`
+	Answers map[string]string `json:"answers" binding:"required"` // question_id -> answer
+}
+
+type LearningPathResponse struct {
+	*LearningPath
+	TotalLessons     int     `json:"total_lessons"`
+	UserProgress     float64 `json:"user_progress,omitempty"`
+	IsEnrolled       bool    `json:"is_enrolled,omitempty"`
+	CompletedLessons int     `json:"completed_lessons,omitempty"`
+}
+
+type LessonResponse struct {
+	*Lesson
+	IsCompleted bool `json:"is_completed,omitempty"`
+	Quiz        *Quiz `json:"quiz,omitempty"`
+}
+
+type ProgressResponse struct {
+	PathID           string               `json:"path_id"`
+	PathTitle        string               `json:"path_title"`
+	Progress         float64              `json:"progress"`
+	CompletedLessons []primitive.ObjectID `json:"completed_lessons"`
+	CurrentLesson    *primitive.ObjectID  `json:"current_lesson,omitempty"`
+	TotalLessons     int                  `json:"total_lessons"`
+	EnrolledAt       time.Time            `json:"enrolled_at"`
+	LastAccessedAt   time.Time            `json:"last_accessed_at"`
+}
+
+type QuizResultResponse struct {
+	QuizID         string            `json:"quiz_id"`
+	LessonID       string            `json:"lesson_id"`
+	Score          float64           `json:"score"`
+	MaxScore       int               `json:"max_score"`
+	Percentage     float64           `json:"percentage"`
+	Passed         bool              `json:"passed"`
+	Answers        map[string]string `json:"answers"`
+	CorrectAnswers map[string]string `json:"correct_answers"`
+	CreatedAt      time.Time         `json:"created_at"`
+}
+
+// Common Response Models
+type SuccessResponse struct {
+	Message string `json:"message"`
+}
