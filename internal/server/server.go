@@ -135,6 +135,7 @@ func New() *gin.Engine {
 
 		// Free Speaking route
 		SetupSpeakingRoutes(apiV1)
+		SetupPronunciationRoutes(apiV1)
 	}
 	// Future routes for other features
 	// interviews := apiV1.Group("/interviews")

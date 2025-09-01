@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"lissanai.com/backend/internal/client"
+	// If you moved shared interfaces/types to internal/common, import it here:
+	// "lissanai.com/backend/internal/common"
 )
 
 type SpeakingService struct {
