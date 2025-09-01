@@ -114,7 +114,6 @@ func New() *gin.Engine {
 			chatAPI.POST("/answer", authMiddleware, chat_handler.SubmitAnswerHandler)
 			chatAPI.POST("/:session_id/end", authMiddleware, chat_handler.EndSessionHandler)
 
-			
 		}
 
 		// User routes (protected)
@@ -126,10 +125,11 @@ func New() *gin.Engine {
 			users.DELETE("/me", userHandler.DeleteAccount)
 			users.POST("/me/push-token", userHandler.AddPushToken)
 		}
-		
-				// Email routes (protected)
+
+		// Email routes (protected)
 		emailGroup := apiV1.Group("/")
-		_ = SetupEmailRoutes(emailGroup)
+		SetupEmailRoutes(emailGroup)
+
 		// Learning routes (protected)
 		learningRoutes := apiV1.Group("/learning")
 		learningRoutes.Use(authMiddleware)
@@ -147,10 +147,8 @@ func New() *gin.Engine {
 			learningRoutes.POST("/quizzes/:id/submit", learningHandler.SubmitQuiz)
 		}
 
-		// Future routes for other features
-		// interviews := apiV1.Group("/interviews")
-		// grammar := apiV1.Group("/grammar")
-		// pronunciation := apiV1.Group("/pronunciation")
+		// Free Speaking route
+		SetupSpeakingRoutes(apiV1)
 	}
 
 	// --- Swagger ---

@@ -28,7 +28,7 @@ func AuthMiddleware(jwtService service.JWTService) gin.HandlerFunc {
 
 		// Extract token
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-		
+
 		// Validate token
 		token, err := jwtService.ValidateAccessToken(tokenString)
 		if err != nil || !token.Valid {
@@ -56,7 +56,7 @@ func GetUserIDFromContext(c *gin.Context) (primitive.ObjectID, bool) {
 	if !exists {
 		return primitive.NilObjectID, false
 	}
-	
+
 	id, ok := userID.(primitive.ObjectID)
 	return id, ok
 }

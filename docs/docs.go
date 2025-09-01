@@ -329,9 +329,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/email/process": {
+        "/email/edit": {
             "post": {
-                "description": "Generates a new email or edits an existing one using AI. Set the 'type' field in the request body to 'GENERATE' or 'EDIT'.",
+                "description": "Corrects and improves a user's drafted email to make it more professional.",
                 "consumes": [
                     "application/json"
                 ],
@@ -341,15 +341,71 @@ const docTemplate = `{
                 "tags": [
                     "Email"
                 ],
-                "summary": "Process Email Request",
+                "summary": "Edit an existing email",
                 "parameters": [
                     {
-                        "description": "The user's request, including the type (GENERATE/EDIT), prompt, and optional tone.",
-                        "name": "emailRequest",
+                        "description": "The user's email draft and optional tone/template.",
+                        "name": "editRequest",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entities.EmailRequest"
+                            "$ref": "#/definitions/entities.EditEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.EmailResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/email/generate": {
+            "post": {
+                "description": "Generates a complete, professional email from a user's prompt (which can be in English or Amharic).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Email"
+                ],
+                "summary": "Generate a new email",
+                "parameters": [
+                    {
+                        "description": "The user's prompt and optional tone/template.",
+                        "name": "generateRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.GenerateEmailRequest"
                         }
                     }
                 ],
@@ -1011,7 +1067,35 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.EmailRequest": {
+        "entities.EditEmailRequest": {
+            "type": "object",
+            "required": [
+                "draft"
+            ],
+            "properties": {
+                "draft": {
+                    "type": "string"
+                },
+                "template_type": {
+                    "type": "string"
+                },
+                "tone": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.EmailResponse": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.GenerateEmailRequest": {
             "type": "object",
             "required": [
                 "prompt"
@@ -1024,20 +1108,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "tone": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "entities.EmailResponse": {
-            "type": "object",
-            "properties": {
-                "generated_email": {
-                    "type": "string"
-                },
-                "subject": {
                     "type": "string"
                 }
             }
@@ -1202,7 +1272,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "lissan-ai-backend-dev.onrender.com",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "LissanAI API",

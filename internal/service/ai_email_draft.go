@@ -1,115 +1,75 @@
-// service/ai_email_service.go
 package service
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 
-	"github.com/google/generative-ai-go/genai"
-
-	"google.golang.org/api/option"
+	"google.golang.org/genai"
 	"lissanai.com/backend/internal/domain/entities"
+	"lissanai.com/backend/internal/domain/interfaces"
 )
 
-// rawEmailResponse matches the AI's JSON output.
-type rawEmailResponse struct {
-	Subject        string `json:"subject"`
-	GeneratedEmail string `json:"body"`
-}
-
-// aiEmailService holds the specific AI model that will handle requests.
+// aiEmailService is the private implementation of the EmailService interface.
 type aiEmailService struct {
-	model *genai.GenerativeModel
+	client *genai.Client
+	model  string
 }
 
-func NewAIEmailService() (*aiEmailService, error) {
+// NewAIEmailService is the public constructor.
+func NewAIEmailService(apiKey string, model string) (interfaces.EmailService, error) {
 	ctx := context.Background()
-
-	apiKey := os.Getenv("GEMINI_API_KEY") // <-- READ FROM ENVIRONMENT
-	if apiKey == "" {
-		return nil, fmt.Errorf("GEMINI_API_KEY environment variable not set")
-	}
-
-	// Use the apiKey variable here
-	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+	client, err := genai.NewClient(ctx, &genai.ClientConfig{APIKey: apiKey})
 	if err != nil {
-		return nil, fmt.Errorf("failed to create Gemini AI client: %w", err)
+		return nil, err
 	}
-
-	model := client.GenerativeModel("gemini-1.5-flash")
-	return &aiEmailService{model: model}, nil
+	return &aiEmailService{client: client, model: model}, nil
 }
 
-// ProcessEmail handles the logic for both generating and editing emails.
-func (s *aiEmailService) ProcessEmail(ctx context.Context, req *entities.EmailRequest) (*entities.EmailResponse, error) {
-	var prompt string
+// GenerateEmailFromPrompt handles the logic for creating a new email.
+func (s *aiEmailService) GenerateEmailFromPrompt(ctx context.Context, req *entities.GenerateEmailRequest) (*entities.EmailResponse, error) {
+	prompt := fmt.Sprintf(`
+Your task is to generate a new, complete, professional English email.
+The user's request might be in English or Amharic.
+Consider the tone: %s and the template type: %s.
+Your response MUST be a single, minified JSON object with two keys: "subject" and "body".
+Do not include any introductory text or code fences.
+User's Request: %s`,
+		req.Tone, req.TemplateType, req.Prompt)
 
-	switch strings.ToUpper(req.Type) {
-	case "GENERATE":
-		prompt = fmt.Sprintf(`
-You are an expert email writing assistant for Ethiopian professionals who may use English as a second language.
-Your task is to generate a new, complete, professional email based on the user's request.
-The user's request might be in English or Amharic; handle both appropriately.
-The final email must be in English.
+	return s.callAIAndParseResponse(ctx, prompt)
+}
 
-Consider the following if there exist:
-- Tone: %s
-- Template Type: %s
-
-Respond ONLY with a single, minified JSON object. The JSON object must have exactly two keys: "subject" and "body".
-
-User's Request: %s
-`, req.Tone, req.TemplateType, req.Prompt)
-	case "EDIT":
-		prompt = fmt.Sprintf(`
-You are an expert English communication coach for Ethiopian professionals.
+// EditEmailDraft handles the logic for correcting an existing email.
+func (s *aiEmailService) EditEmailDraft(ctx context.Context, req *entities.EditEmailRequest) (*entities.EmailResponse, error) {
+	prompt := fmt.Sprintf(`
 Your task is to correct and improve an existing email draft to make it more professional.
 Fix all grammatical errors, improve the tone, and enhance clarity.
-The final, improved email must be in English.
+Consider the desired tone: %s and template type: %s.
+Your response MUST be a single, minified JSON object with two keys: "subject" and "body".
+Do not include any introductory text or code fences.
+User's Email Draft: %s`,
+		req.Tone, req.TemplateType, req.Draft)
 
-Consider the following if there exist:
-- Tone: %s
-- Template Type: %s
+	return s.callAIAndParseResponse(ctx, prompt)
+}
 
-Respond ONLY with a single, minified JSON object. The JSON object must have exactly two keys: "subject" and "body".
-
-User's Email Draft: %s
-`, req.Tone, req.TemplateType, req.Prompt)
-
-	default:
-		return nil, fmt.Errorf("invalid request type: '%s'. Must be 'GENERATE' or 'EDIT'", req.Type)
-	}
-
-	resp, err := s.model.GenerateContent(ctx, genai.Text(prompt))
+// callAIAndParseResponse is a private helper to avoid duplicating code.
+func (s *aiEmailService) callAIAndParseResponse(ctx context.Context, prompt string) (*entities.EmailResponse, error) {
+	result, err := s.client.Models.GenerateContent(ctx, s.model, genai.Text(prompt), nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate content: %w", err)
+		return nil, err
 	}
 
-	if len(resp.Candidates) == 0 || len(resp.Candidates[0].Content.Parts) == 0 {
-		return nil, fmt.Errorf("AI returned an empty response")
-	}
-	text := string(resp.Candidates[0].Content.Parts[0].(genai.Text))
-
-	text = strings.TrimSpace(text)
+	text := strings.TrimSpace(result.Text())
 	text = strings.TrimPrefix(text, "```json")
-	text = strings.TrimPrefix(text, "```")
 	text = strings.TrimSuffix(text, "```")
-	text = strings.TrimSpace(text)
 
-	var rawResp rawEmailResponse
-	if err := json.Unmarshal([]byte(text), &rawResp); err != nil {
-		return nil, fmt.Errorf("failed to parse AI response: %w\nRaw output from AI: %s", err, text)
+	var emailResp entities.EmailResponse
+	if err := json.Unmarshal([]byte(text), &emailResp); err != nil {
+		return nil, fmt.Errorf("failed to parse AI response: %w\nRaw output: %s", err, text)
 	}
 
-	cleanBody := strings.ReplaceAll(rawResp.GeneratedEmail, "\\n", "\n")
-
-	emailResp := &entities.EmailResponse{
-		Subject:        rawResp.Subject,
-		GeneratedEmail: cleanBody,
-	}
-
-	return emailResp, nil
+	return &emailResp, nil
 }

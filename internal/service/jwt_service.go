@@ -32,6 +32,7 @@ func NewJWTService(secretKey string) JWTService {
 		secretKey:       secretKey,
 		accessTokenTTL:  7 * 24 * time.Hour,  // 7 days
 		refreshTokenTTL: 14 * 24 * time.Hour,  // 14 days
+
 	}
 }
 
