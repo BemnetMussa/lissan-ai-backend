@@ -42,17 +42,49 @@ User's Request: %s`,
 }
 
 // EditEmailDraft handles the logic for correcting an existing email.
-func (s *aiEmailService) EditEmailDraft(ctx context.Context, req *entities.EditEmailRequest) (*entities.EmailResponse, error) {
+func (s *aiEmailService) EditEmailDraft(ctx context.Context, req *entities.EditEmailRequest) (*entities.EditEmailResponse, error) {
 	prompt := fmt.Sprintf(`
 Your task is to correct and improve an existing email draft to make it more professional.
 Fix all grammatical errors, improve the tone, and enhance clarity.
 Consider the desired tone: %s and template type: %s.
-Your response MUST be a single, minified JSON object with two keys: "subject" and "body".
+
+For each correction you make, provide:
+1. The original phrase that was incorrect
+2. The corrected phrase
+3. A brief explanation of the correction
+
+Your response MUST be a single, minified JSON object with the following structure:
+{
+  "subject": "corrected subject",
+  "body": "corrected email body",
+  "corrections": [
+    {
+      "original_phrase": "original text",
+      "corrected_phrase": "corrected text",
+      "explanation": "brief explanation"
+    }
+  ]
+}
+
 Do not include any introductory text or code fences.
 User's Email Draft: %s`,
 		req.Tone, req.TemplateType, req.Draft)
 
-	return s.callAIAndParseResponse(ctx, prompt)
+	result, err := s.client.Models.GenerateContent(ctx, s.model, genai.Text(prompt), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	text := strings.TrimSpace(result.Text())
+	text = strings.TrimPrefix(text, "```json")
+	text = strings.TrimSuffix(text, "```")
+
+	var editResp entities.EditEmailResponse
+	if err := json.Unmarshal([]byte(text), &editResp); err != nil {
+		return nil, fmt.Errorf("failed to parse AI response: %w\nRaw output: %s", err, text)
+	}
+
+	return &editResp, nil
 }
 
 // callAIAndParseResponse is a private helper to avoid duplicating code.

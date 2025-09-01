@@ -24,6 +24,70 @@ definitions:
     required:
     - email
     type: object
+  domain.LearningPathResponse:
+    properties:
+      category:
+        type: string
+      completed_lessons:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      duration:
+        description: in minutes
+        type: integer
+      id:
+        type: string
+      is_enrolled:
+        type: boolean
+      lesson_ids:
+        items:
+          type: string
+        type: array
+      level:
+        description: beginner, intermediate, advanced
+        type: string
+      title:
+        type: string
+      total_lessons:
+        type: integer
+      updated_at:
+        type: string
+      user_progress:
+        type: number
+    type: object
+  domain.LessonResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      duration:
+        description: in minutes
+        type: integer
+      id:
+        type: string
+      is_completed:
+        type: boolean
+      order:
+        type: integer
+      path_id:
+        type: string
+      quiz:
+        $ref: '#/definitions/domain.Quiz'
+      quiz_id:
+        type: string
+      title:
+        type: string
+      type:
+        description: video, text, quiz, exercise
+        type: string
+      updated_at:
+        type: string
+    type: object
   domain.LoginRequest:
     properties:
       email:
@@ -41,6 +105,27 @@ definitions:
       message:
         type: string
     type: object
+  domain.ProgressResponse:
+    properties:
+      completed_lessons:
+        items:
+          type: string
+        type: array
+      current_lesson:
+        type: string
+      enrolled_at:
+        type: string
+      last_accessed_at:
+        type: string
+      path_id:
+        type: string
+      path_title:
+        type: string
+      progress:
+        type: number
+      total_lessons:
+        type: integer
+    type: object
   domain.PushTokenRequest:
     properties:
       platform:
@@ -52,6 +137,79 @@ definitions:
     required:
     - platform
     - token
+    type: object
+  domain.Question:
+    properties:
+      correct:
+        type: string
+      id:
+        type: string
+      options:
+        items:
+          type: string
+        type: array
+      points:
+        type: integer
+      text:
+        type: string
+      type:
+        description: multiple_choice, true_false, text
+        type: string
+    type: object
+  domain.Quiz:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      lesson_id:
+        type: string
+      questions:
+        items:
+          $ref: '#/definitions/domain.Question'
+        type: array
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.QuizResultResponse:
+    properties:
+      answers:
+        additionalProperties:
+          type: string
+        type: object
+      correct_answers:
+        additionalProperties:
+          type: string
+        type: object
+      created_at:
+        type: string
+      lesson_id:
+        type: string
+      max_score:
+        type: integer
+      passed:
+        type: boolean
+      percentage:
+        type: number
+      quiz_id:
+        type: string
+      score:
+        type: number
+    type: object
+  domain.QuizSubmissionRequest:
+    properties:
+      answers:
+        additionalProperties:
+          type: string
+        description: question_id -> answer
+        type: object
+      quiz_id:
+        type: string
+    required:
+    - answers
+    - quiz_id
     type: object
   domain.RefreshTokenRequest:
     properties:
@@ -109,6 +267,11 @@ definitions:
     - access_token
     - provider
     type: object
+  domain.SuccessResponse:
+    properties:
+      message:
+        type: string
+    type: object
   domain.TokenResponse:
     properties:
       access_token:
@@ -143,176 +306,6 @@ definitions:
       updated_at:
         type: string
     type: object
-  domain.LearningPathResponse:
-    properties:
-      id:
-        type: string
-      title:
-        type: string
-      description:
-        type: string
-      level:
-        type: string
-        enum: [beginner, intermediate, advanced]
-      category:
-        type: string
-      duration:
-        type: integer
-        description: Duration in minutes
-      lesson_ids:
-        type: array
-        items:
-          type: string
-      total_lessons:
-        type: integer
-      user_progress:
-        type: number
-        format: float
-      is_enrolled:
-        type: boolean
-      completed_lessons:
-        type: integer
-      created_at:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  domain.LessonResponse:
-    properties:
-      id:
-        type: string
-      path_id:
-        type: string
-      title:
-        type: string
-      description:
-        type: string
-      content:
-        type: string
-      type:
-        type: string
-        enum: [video, text, quiz, exercise]
-      duration:
-        type: integer
-        description: Duration in minutes
-      order:
-        type: integer
-      quiz_id:
-        type: string
-      is_completed:
-        type: boolean
-      quiz:
-        $ref: '#/definitions/domain.Quiz'
-      created_at:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  domain.Quiz:
-    properties:
-      id:
-        type: string
-      lesson_id:
-        type: string
-      title:
-        type: string
-      questions:
-        type: array
-        items:
-          $ref: '#/definitions/domain.Question'
-      created_at:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  domain.Question:
-    properties:
-      id:
-        type: string
-      text:
-        type: string
-      type:
-        type: string
-        enum: [multiple_choice, true_false, text]
-      options:
-        type: array
-        items:
-          type: string
-      points:
-        type: integer
-    type: object
-  domain.ProgressResponse:
-    properties:
-      path_id:
-        type: string
-      path_title:
-        type: string
-      progress:
-        type: number
-        format: float
-        description: Progress percentage (0-100)
-      completed_lessons:
-        type: array
-        items:
-          type: string
-      current_lesson:
-        type: string
-      total_lessons:
-        type: integer
-      enrolled_at:
-        type: string
-      last_accessed_at:
-        type: string
-    type: object
-  domain.QuizSubmissionRequest:
-    properties:
-      quiz_id:
-        type: string
-        example: "60f7b3b3b3b3b3b3b3b3b3b3"
-      answers:
-        type: object
-        additionalProperties:
-          type: string
-        example:
-          q1: "I have seen that movie"
-          q2: "True"
-          q3: "will have completed"
-    required:
-    - quiz_id
-    - answers
-    type: object
-  domain.QuizResultResponse:
-    properties:
-      quiz_id:
-        type: string
-      lesson_id:
-        type: string
-      score:
-        type: number
-        format: float
-      max_score:
-        type: integer
-      percentage:
-        type: number
-        format: float
-      passed:
-        type: boolean
-      answers:
-        type: object
-        additionalProperties:
-          type: string
-      correct_answers:
-        type: object
-        additionalProperties:
-          type: string
-      created_at:
-        type: string
-    type: object
-  domain.SuccessResponse:
-    properties:
-      message:
-        type: string
-    type: object
   entities.EditEmailRequest:
     properties:
       draft:
@@ -323,17 +316,6 @@ definitions:
         type: string
     required:
     - draft
-    type: object
-  entities.EmailRequest:
-    properties:
-      prompt:
-        type: string
-      template_type:
-        type: string
-      tone:
-        type: string
-    required:
-    - prompt
     type: object
   entities.EmailResponse:
     properties:
@@ -449,13 +431,253 @@ definitions:
         example: 13c70d60-8dab-4b08-b454-5225dcca1809
         type: string
     type: object
-host: lissan-ai-backend-dev.onrender.com
+host: localhost:8080
 info:
   contact: {}
   description: AI-powered English coach for Ethiopians seeking global job opportunities
   title: LissanAI API
   version: "1.0"
 paths:
+  /api/v1/learning/lessons/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Fetch the content for a specific lesson
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.LessonResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get lesson content
+      tags:
+      - Learning
+  /api/v1/learning/lessons/{id}/complete:
+    post:
+      consumes:
+      - application/json
+      description: Mark a lesson as completed for the authenticated user
+      parameters:
+      - description: Lesson ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Mark lesson as completed
+      tags:
+      - Learning
+  /api/v1/learning/paths:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all available learning paths with user progress if enrolled
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.LearningPathResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all learning paths
+      tags:
+      - Learning
+  /api/v1/learning/paths/{id}/enroll:
+    post:
+      consumes:
+      - application/json
+      description: Enroll the authenticated user in a specific learning path
+      parameters:
+      - description: Learning Path ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Enroll in a learning path
+      tags:
+      - Learning
+  /api/v1/learning/paths/{id}/progress:
+    get:
+      consumes:
+      - application/json
+      description: Get the authenticated user's progress for a specific learning path
+      parameters:
+      - description: Learning Path ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.ProgressResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user progress for a learning path
+      tags:
+      - Learning
+  /api/v1/learning/quizzes/{id}/submit:
+    post:
+      consumes:
+      - application/json
+      description: Submit user's answers to a quiz for grading
+      parameters:
+      - description: Quiz ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Quiz answers
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.QuizSubmissionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.QuizResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Submit quiz answers
+      tags:
+      - Learning
   /auth/forgot-password:
     post:
       consumes:
@@ -994,236 +1216,34 @@ paths:
       summary: Register push token
       tags:
       - Users
-  /learning/paths:
+  /ws/conversation:
     get:
-      description: Retrieve all available learning paths with user progress if enrolled
-      produces:
-      - application/json
+      description: |-
+        Establishes a WebSocket for a real-time, voice-based conversation with an AI. The connection automatically terminates after 3 minutes.
+
+        ### Conversation Lifecycle:
+        1. **Connect**: The client establishes a WebSocket connection to this endpoint.
+        2. **Speak**: The user speaks. The client continuously streams their voice as binary audio messages.
+        3. **Pause**: The user stops speaking. After ~2-3 seconds of silence, the client sends a final text message.
+        4. **Process**: The server receives the signal and immediately sends back a text message `{"status": "processing"}`. The frontend UI should update to show this.
+        5. **Respond**: The server, after finishing the AI processing, sends the AI's spoken response back as a single binary audio message. The frontend plays this audio.
+        6. **Repeat**: The process repeats from step 2.
+        7. **Timeout**: The connection is automatically and forcefully closed by the server after 3 minutes.
+
+        ### Client Responsibilities:
+        - **Must** stream user's voice as raw `BinaryMessage` chunks.
+        - **Must** implement silence detection (~2-3 seconds).
+        - **Must** send a `TextMessage` with the JSON `{"type": "end_of_speech"}` after detecting silence.
+        - **Must** handle incoming `TextMessage` status updates (e.g., `{"status": "processing"}`) to update the UI.
+        - **Must** be able to receive and play back `BinaryMessage` audio from the server.
       responses:
-        "200":
-          description: OK
+        "101":
+          description: Switching Protocols
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/domain.LearningPathResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get all learning paths
+            type: string
+      summary: Real-time AI Voice Conversation
       tags:
-      - Learning
-  /learning/paths/{id}/enroll:
-    post:
-      description: Enroll the authenticated user in a specific learning path
-      parameters:
-      - description: Learning Path ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.SuccessResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Enroll in a learning path
-      tags:
-      - Learning
-  /learning/paths/{id}/progress:
-    get:
-      description: Get the authenticated user's progress for a specific learning path
-      parameters:
-      - description: Learning Path ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.ProgressResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get user progress for a learning path
-      tags:
-      - Learning
-  /learning/lessons/{id}:
-    get:
-      description: Fetch the content for a specific lesson
-      parameters:
-      - description: Lesson ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.LessonResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get lesson content
-      tags:
-      - Learning
-  /learning/lessons/{id}/complete:
-    post:
-      description: Mark a lesson as completed for the authenticated user
-      parameters:
-      - description: Lesson ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.SuccessResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Mark lesson as completed
-      tags:
-      - Learning
-  /learning/quizzes/{id}/submit:
-    post:
-      consumes:
-      - application/json
-      description: Submit user's answers to a quiz for grading
-      parameters:
-      - description: Quiz ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Quiz answers
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/domain.QuizSubmissionRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.QuizResultResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Submit quiz answers
-      tags:
-      - Learning
+      - Conversation
 securityDefinitions:
   BearerAuth:
     description: Type "Bearer" followed by a space and JWT token.
