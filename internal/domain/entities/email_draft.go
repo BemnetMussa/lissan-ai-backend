@@ -16,3 +16,15 @@ type EmailResponse struct {
 	Subject string `json:"subject"`
 	Body    string `json:"body"`
 }
+
+type Correction struct {
+	OriginalPhrase  string `json:"original_phrase"`
+	CorrectedPhrase string `json:"corrected_phrase"`
+	Explanation     string `json:"explanation"`
+}
+
+type EditEmailResponse struct {
+	Subject     string       `json:"subject"`
+	Body        string       `json:"body"`
+	Corrections []Correction `json:"corrections"`
+}

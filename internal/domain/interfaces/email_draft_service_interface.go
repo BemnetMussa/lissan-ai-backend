@@ -12,5 +12,5 @@ type EmailService interface {
 	GenerateEmailFromPrompt(ctx context.Context, req *entities.GenerateEmailRequest) (*entities.EmailResponse, error)
 
 	// EditEmailDraft corrects and improves an existing email draft.
-	EditEmailDraft(ctx context.Context, req *entities.EditEmailRequest) (*entities.EmailResponse, error)
+	EditEmailDraft(ctx context.Context, req *entities.EditEmailRequest) (*entities.EditEmailResponse, error)
 }
