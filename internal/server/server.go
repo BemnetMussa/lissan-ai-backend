@@ -65,18 +65,21 @@ func New() *gin.Engine {
 	passwordResetRepo := repository.NewPasswordResetRepository(db)
 	chatSessionRepo := repository.NewMongoSessionRepo(db)
 	chatMessageRepo := repository.NewMongoMessageRepo(db)
+	learningRepo := repository.NewLearningRepository(db)
 
 	// --- Use Cases ---
 	authUsecase := usecase.NewAuthUsecase(userRepo, refreshTokenRepo, passwordResetRepo, jwtService, passwordService, emailService)
 	userUsecase := usecase.NewUserUsecase(userRepo, refreshTokenRepo)
 	grammer_usecase := usecase.NewGrammarUsecase(aiService)
 	chat_usecase := usecase.NewChatUsecase(chatSessionRepo, chatMessageRepo, chatAiService)
+	learningUsecase := usecase.NewLearningUsecase(learningRepo)
 
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authUsecase)
 	userHandler := handler.NewUserHandler(userUsecase)
 	grammer_handler := handler.NewGrammarHandler(grammer_usecase)
 	chat_handler := handler.NewChatHandler(chat_usecase)
+	learningHandler := handler.NewLearningHandler(learningUsecase)
 
 	// --- Middleware ---
 	authMiddleware := middleware.AuthMiddleware(jwtService)
@@ -124,23 +127,29 @@ func New() *gin.Engine {
 		}
 
 		// Email routes (protected)
-
 		emailGroup := apiV1.Group("/")
 		SetupEmailRoutes(emailGroup)
-		// Future routes for other features
-		// interviews := apiV1.Group("/interviews")
-		// grammar := apiV1.Group("/grammar")
-		// pronunciation := apiV1.Group("/pronunciation")
-		// learning := apiV1.Group("/learning")
+
+		// Learning routes (protected)
+		learningRoutes := apiV1.Group("/learning")
+		learningRoutes.Use(authMiddleware)
+		{
+			// Learning paths
+			learningRoutes.GET("/paths", learningHandler.GetAllLearningPaths)
+			learningRoutes.POST("/paths/:id/enroll", learningHandler.EnrollInPath)
+			learningRoutes.GET("/paths/:id/progress", learningHandler.GetUserProgress)
+
+			// Lessons
+			learningRoutes.GET("/lessons/:id", learningHandler.GetLesson)
+			learningRoutes.POST("/lessons/:id/complete", learningHandler.CompleteLesson)
+
+			// Quizzes
+			learningRoutes.POST("/quizzes/:id/submit", learningHandler.SubmitQuiz)
+		}
 
 		// Free Speaking route
 		SetupSpeakingRoutes(apiV1)
 	}
-	// Future routes for other features
-	// interviews := apiV1.Group("/interviews")
-	// grammar := apiV1.Group("/grammar")
-	// pronunciation := apiV1.Group("/pronunciation")[]
-	// learning := apiV1.Group("/learning")
 
 	// --- Swagger ---
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
