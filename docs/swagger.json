@@ -1048,6 +1048,98 @@
                 }
             }
         },
+        "/pronunciation/assess": {
+            "post": {
+                "description": "Accepts a target sentence and the user's recorded audio. It analyzes the user's speech against the target text and returns detailed feedback on their pronunciation. This is a multipart/form-data request.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pronunciation"
+                ],
+                "summary": "Assess user's pronunciation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The exact sentence the user was asked to say.",
+                        "name": "target_text",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "The user's recorded audio file (e.g., in ogg, flac, or wav format).",
+                        "name": "audio_data",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.PronunciationFeedback"
+                        }
+                    },
+                    "400": {
+                        "description": "Returns an error if the form data is invalid or missing.",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Returns an error if the AI service fails during assessment.",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pronunciation/sentence": {
+            "get": {
+                "description": "Dynamically generates a single, new English sentence tailored for pronunciation practice for Amharic speakers. Each request returns a unique sentence.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pronunciation"
+                ],
+                "summary": "Get a practice sentence",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.PracticeSentence"
+                        }
+                    },
+                    "500": {
+                        "description": "Returns an error if the AI service fails to generate a sentence.",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users/me": {
             "get": {
                 "security": [
@@ -1740,6 +1832,34 @@
                 },
                 "tone": {
                     "type": "string"
+                }
+            }
+        },
+        "entities.PracticeSentence": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.PronunciationFeedback": {
+            "type": "object",
+            "properties": {
+                "full_feedback_summary": {
+                    "type": "string"
+                },
+                "mispronouncedwords": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "overall_accuracy_score": {
+                    "type": "number"
                 }
             }
         },

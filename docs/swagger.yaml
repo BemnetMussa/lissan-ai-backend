@@ -335,6 +335,24 @@ definitions:
     required:
     - prompt
     type: object
+  entities.PracticeSentence:
+    properties:
+      id:
+        type: string
+      text:
+        type: string
+    type: object
+  entities.PronunciationFeedback:
+    properties:
+      full_feedback_summary:
+        type: string
+      mispronouncedwords:
+        items:
+          type: string
+        type: array
+      overall_accuracy_score:
+        type: number
+    type: object
   handler.GrammarRequest:
     properties:
       text:
@@ -1104,6 +1122,70 @@ paths:
       summary: Start a new interview session
       tags:
       - Interview
+  /pronunciation/assess:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Accepts a target sentence and the user's recorded audio. It analyzes
+        the user's speech against the target text and returns detailed feedback on
+        their pronunciation. This is a multipart/form-data request.
+      parameters:
+      - description: The exact sentence the user was asked to say.
+        in: formData
+        name: target_text
+        required: true
+        type: string
+      - description: The user's recorded audio file (e.g., in ogg, flac, or wav format).
+        in: formData
+        name: audio_data
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.PronunciationFeedback'
+        "400":
+          description: Returns an error if the form data is invalid or missing.
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+        "500":
+          description: Returns an error if the AI service fails during assessment.
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Assess user's pronunciation
+      tags:
+      - Pronunciation
+  /pronunciation/sentence:
+    get:
+      description: Dynamically generates a single, new English sentence tailored for
+        pronunciation practice for Amharic speakers. Each request returns a unique
+        sentence.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.PracticeSentence'
+        "500":
+          description: Returns an error if the AI service fails to generate a sentence.
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Get a practice sentence
+      tags:
+      - Pronunciation
   /users/me:
     delete:
       description: Allow a user to delete their account
