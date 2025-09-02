@@ -21,6 +21,6 @@ func (uc *emailUsecase) GenerateEmailFromPrompt(ctx context.Context, req *entiti
 }
 
 // EditEmailDraft passes the request to the service layer.
-func (uc *emailUsecase) EditEmailDraft(ctx context.Context, req *entities.EditEmailRequest) (*entities.EmailResponse, error) {
+func (uc *emailUsecase) EditEmailDraft(ctx context.Context, req *entities.EditEmailRequest) (*entities.EditEmailResponse, error) {
 	return uc.emailService.EditEmailDraft(ctx, req)
 }
