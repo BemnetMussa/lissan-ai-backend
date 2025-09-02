@@ -149,6 +149,7 @@ func New() *gin.Engine {
 
 		// Free Speaking route
 		SetupSpeakingRoutes(apiV1)
+		SetupPronunciationRoutes(apiV1)
 	}
 
 	// --- Swagger ---
