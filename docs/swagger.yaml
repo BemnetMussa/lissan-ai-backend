@@ -449,7 +449,7 @@ definitions:
         example: 13c70d60-8dab-4b08-b454-5225dcca1809
         type: string
     type: object
-host: localhost:8080
+host: lissan-ai-backend-dev.onrender.com
 info:
   contact: {}
   description: AI-powered English coach for Ethiopians seeking global job opportunities
