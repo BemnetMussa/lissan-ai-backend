@@ -1,5 +1,3 @@
-// internal/service/speaking_service.go
-
 package service
 
 import (
@@ -16,29 +14,28 @@ type SpeakingService interface {
 
 
 type speakingServiceImpl struct {
-	groqClient       *client.GroqClient
-	whisperClient    *client.WhisperClient
-	elevenLabsClient *client.ElevenLabsTTSClient
+	groqClient         *client.GroqClient
+	whisperClient      *client.WhisperClient
+	unrealSpeechClient *client.UnrealSpeechTTSClient // 1. Renamed the field
 }
 
-func NewSpeakingService(groq *client.GroqClient, whisper *client.WhisperClient, eleven *client.ElevenLabsTTSClient) SpeakingService {
+// 2. Updated the function signature to accept the new client type
+func NewSpeakingService(groq *client.GroqClient, whisper *client.WhisperClient, unreal *client.UnrealSpeechTTSClient) SpeakingService {
 	return &speakingServiceImpl{
-		groqClient:       groq,
-		whisperClient:    whisper,
-		elevenLabsClient: eleven,
+		groqClient:         groq,
+		whisperClient:      whisper,
+		unrealSpeechClient: unreal, // 3. Updated the assignment
 	}
 }
 
 
 func (s *speakingServiceImpl) ProcessAudioFeedback(ctx context.Context, audioData []byte) ([]byte, error) {
 	// 1️⃣ STT: Convert audio to text
-	// Pass the context to your client for potential cancellation.
 	text, err := s.whisperClient.Transcribe(ctx, audioData)
 	if err != nil {
 		return nil, fmt.Errorf("STT error: %w", err)
 	}
 	if text == "" {
-		// Handle cases of silence gracefully
 		return nil, fmt.Errorf("no speech detected in audio")
 	}
 	fmt.Println("transcripted text: ", text)
@@ -49,7 +46,6 @@ func (s *speakingServiceImpl) ProcessAudioFeedback(ctx context.Context, audioDat
 		return nil, fmt.Errorf("LLM error: %w", err)
 	}
 	
-
 	// 🧹 Clean and trim response before TTS
 	cleanedResponse := strings.TrimSpace(response)
 	if len(cleanedResponse) == 0 {
@@ -61,7 +57,8 @@ func (s *speakingServiceImpl) ProcessAudioFeedback(ctx context.Context, audioDat
 	}
 
 	// 3️⃣ TTS: Convert response to audio
-	ttsAudio, err := s.elevenLabsClient.GenerateAudio(cleanedResponse)
+	// 4. Use the new client to generate audio. The method call is the same!
+	ttsAudio, err := s.unrealSpeechClient.GenerateAudio(cleanedResponse)
 	if err != nil {
 		return nil, fmt.Errorf("TTS error: %w", err)
 	}
