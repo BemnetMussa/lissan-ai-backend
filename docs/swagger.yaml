@@ -313,6 +313,113 @@ definitions:
       message:
         type: string
     type: object
+  domain.StreakInfo:
+    properties:
+      current_streak:
+        type: integer
+        example: 7
+      longest_streak:
+        type: integer
+        example: 15
+      last_activity_date:
+        type: string
+        format: date-time
+      streak_frozen:
+        type: boolean
+        example: false
+      freeze_count:
+        type: integer
+        example: 1
+      max_freezes:
+        type: integer
+        example: 2
+      can_freeze:
+        type: boolean
+        example: true
+      days_until_loss:
+        type: integer
+        example: 1
+    type: object
+  domain.FreezeStreakRequest:
+    properties:
+      reason:
+        type: string
+        example: "Vacation"
+    type: object
+  domain.ActivityCalendarDay:
+    properties:
+      date:
+        type: string
+        example: "2025-09-03"
+        description: Date in YYYY-MM-DD format
+      activity_count:
+        type: integer
+        example: 3
+        description: Number of activities on this day
+      has_activity:
+        type: boolean
+        example: true
+      activity_types:
+        type: array
+        items:
+          type: string
+        example: ["lesson_completed", "quiz_passed"]
+    type: object
+  domain.ActivityCalendarWeek:
+    properties:
+      days:
+        type: array
+        items:
+          $ref: '#/definitions/domain.ActivityCalendarDay'
+    type: object
+  domain.ActivityCalendarSummary:
+    properties:
+      total_activities:
+        type: integer
+        example: 42
+      activity_breakdown:
+        type: object
+        additionalProperties:
+          type: integer
+        example:
+          lesson_completed: 15
+          quiz_passed: 12
+          grammar_check: 8
+          pronunciation_session: 7
+      most_active_day:
+        type: string
+        example: "2025-09-03"
+      most_active_count:
+        type: integer
+        example: 5
+      consecutive_weeks:
+        type: integer
+        example: 3
+    type: object
+  domain.ActivityCalendarResponse:
+    properties:
+      year:
+        type: integer
+        example: 2025
+      total_days:
+        type: integer
+        example: 365
+      active_days:
+        type: integer
+        example: 42
+      current_streak:
+        type: integer
+        example: 7
+      longest_streak:
+        type: integer
+        example: 15
+      weeks:
+        type: array
+        items:
+          $ref: '#/definitions/domain.ActivityCalendarWeek'
+      summary:
+        $ref: '#/definitions/domain.ActivityCalendarSummary'
+    type: object
   entities.EditEmailRequest:
     properties:
       draft:
@@ -1224,6 +1331,132 @@ paths:
       summary: Submit quiz answers
       tags:
       - Learning
+  /streak/info:
+    get:
+      description: Get the current user's streak information including current streak, longest streak, and freeze status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.StreakInfo'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user streak information
+      tags:
+      - Streak
+  /streak/freeze:
+    post:
+      consumes:
+      - application/json
+      description: Freeze the user's current streak to prevent it from being lost due to inactivity (limited uses per month)
+      parameters:
+      - description: Freeze reason
+        in: body
+        name: request
+        required: false
+        schema:
+          $ref: '#/definitions/domain.FreezeStreakRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Freeze streak
+      tags:
+      - Streak
+  /streak/activity:
+    post:
+      consumes:
+      - application/json
+      description: Record a user activity to maintain their streak - this is called internally by other services
+      parameters:
+      - description: Type of activity
+        enum:
+        - lesson_completed
+        - quiz_passed
+        - daily_goal_met
+        - pronunciation_session
+        - mock_interview
+        - grammar_check
+        in: query
+        name: activity_type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Record activity (Internal)
+      tags:
+      - Streak
+  /streak/calendar:
+    get:
+      description: Get GitHub-like activity calendar showing daily learning activities
+      parameters:
+      - description: Year (default: current year)
+        example: 2025
+        in: query
+        name: year
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.ActivityCalendarResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get activity calendar
+      tags:
+      - Streak
 securityDefinitions:
   BearerAuth:
     description: Type "Bearer" followed by a space and JWT token.

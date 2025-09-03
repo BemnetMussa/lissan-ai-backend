@@ -74,12 +74,20 @@ func New() *gin.Engine {
 	chat_usecase := usecase.NewChatUsecase(chatSessionRepo, chatMessageRepo, chatAiService)
 	learningUsecase := usecase.NewLearningUsecase(learningRepo)
 
+	// --- Services ---
+	streakService := service.NewStreakService(db)
+	
+	// --- Background Jobs ---
+	// Note: In production, you might want to start these jobs in a separate process
+	// For now, we'll start them here for simplicity
+
 	// --- Handlers ---
 	authHandler := handler.NewAuthHandler(authUsecase)
 	userHandler := handler.NewUserHandler(userUsecase)
-	grammer_handler := handler.NewGrammarHandler(grammer_usecase)
-	chat_handler := handler.NewChatHandler(chat_usecase)
-	learningHandler := handler.NewLearningHandler(learningUsecase)
+	grammer_handler := handler.NewGrammarHandler(grammer_usecase, streakService)
+	chat_handler := handler.NewChatHandler(chat_usecase, streakService)
+	pronunciationHandler := handler.NewPronunciationActivityHandler(streakService)
+	learningHandler := handler.NewLearningHandler(learningUsecase, streakService)
 
 	// --- Middleware ---
 	authMiddleware := middleware.AuthMiddleware(jwtService)
@@ -149,6 +157,16 @@ func New() *gin.Engine {
 
 		// Free Speaking route
 		SetupSpeakingRoutes(apiV1)
+
+		// Pronunciation routes (protected)
+		pronunciationRoutes := apiV1.Group("/pronunciation")
+		pronunciationRoutes.Use(authMiddleware)
+		{
+			pronunciationRoutes.POST("/activity", pronunciationHandler.RecordPronunciationActivity)
+		}
+
+		// Streak routes (protected)
+		SetupStreakRoutes(apiV1, authMiddleware, db)
 	}
 
 	// --- Swagger ---

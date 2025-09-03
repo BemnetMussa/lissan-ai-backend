@@ -79,6 +79,14 @@ type User struct {
 	ProviderID   string                 `json:"-" bson:"provider_id,omitempty"`
 	Settings     map[string]interface{} `json:"settings,omitempty" bson:"settings,omitempty"`
 	PushTokens   []PushToken            `json:"-" bson:"push_tokens,omitempty"`
+	
+	// Streak System
+	CurrentStreak    int       `json:"current_streak" bson:"current_streak"`
+	LongestStreak    int       `json:"longest_streak" bson:"longest_streak"`
+	LastActivityDate time.Time `json:"last_activity_date" bson:"last_activity_date"`
+	StreakFrozen     bool      `json:"streak_frozen" bson:"streak_frozen"`
+	FreezeCount      int       `json:"freeze_count" bson:"freeze_count"`
+	
 	CreatedAt    time.Time              `json:"created_at" bson:"created_at"`
 	UpdatedAt    time.Time              `json:"updated_at" bson:"updated_at"`
 }
@@ -223,6 +231,73 @@ type QuizResultResponse struct {
 	Answers        map[string]string `json:"answers"`
 	CorrectAnswers map[string]string `json:"correct_answers"`
 	CreatedAt      time.Time         `json:"created_at"`
+}
+
+// Streak Models
+type StreakInfo struct {
+	CurrentStreak    int       `json:"current_streak"`
+	LongestStreak    int       `json:"longest_streak"`
+	LastActivityDate time.Time `json:"last_activity_date"`
+	StreakFrozen     bool      `json:"streak_frozen"`
+	FreezeCount      int       `json:"freeze_count"`
+	MaxFreezes       int       `json:"max_freezes"`
+	CanFreeze        bool      `json:"can_freeze"`
+	DaysUntilLoss    int       `json:"days_until_loss"`
+}
+
+type StreakActivity struct {
+	ID           primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	UserID       primitive.ObjectID `json:"user_id" bson:"user_id"`
+	ActivityType string             `json:"activity_type" bson:"activity_type"` // lesson_completed, quiz_passed, daily_goal_met
+	Date         time.Time          `json:"date" bson:"date"`
+	CreatedAt    time.Time          `json:"created_at" bson:"created_at"`
+}
+
+type FreezeStreakRequest struct {
+	Reason string `json:"reason,omitempty" example:"Vacation"`
+}
+
+// Activity Calendar Models (GitHub-like contribution graph)
+type ActivityCalendarDay struct {
+	Date         string `json:"date"`         // YYYY-MM-DD format
+	ActivityCount int    `json:"activity_count"` // Number of activities on this day
+	HasActivity  bool   `json:"has_activity"`   // Whether user was active on this day
+	ActivityTypes []string `json:"activity_types,omitempty"` // Types of activities done
+}
+
+type ActivityCalendarWeek struct {
+	Days []ActivityCalendarDay `json:"days"`
+}
+
+type ActivityCalendarResponse struct {
+	Year         int                    `json:"year"`
+	TotalDays    int                    `json:"total_days"`
+	ActiveDays   int                    `json:"active_days"`
+	CurrentStreak int                   `json:"current_streak"`
+	LongestStreak int                   `json:"longest_streak"`
+	Weeks        []ActivityCalendarWeek `json:"weeks"`
+	Summary      ActivityCalendarSummary `json:"summary"`
+}
+
+type ActivityCalendarSummary struct {
+	TotalActivities     int            `json:"total_activities"`
+	ActivityBreakdown   map[string]int `json:"activity_breakdown"`   // Count by activity type
+	MostActiveDay       string         `json:"most_active_day"`      // Date with most activities
+	MostActiveCount     int            `json:"most_active_count"`    // Max activities in a single day
+	ConsecutiveWeeks    int            `json:"consecutive_weeks"`    // Weeks with at least one activity
+}
+
+// Daily Activity Summary (for efficient querying)
+type DailyActivitySummary struct {
+	ID            primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	UserID        primitive.ObjectID `json:"user_id" bson:"user_id"`
+	Date          string             `json:"date" bson:"date"` // YYYY-MM-DD format
+	ActivityCount int                `json:"activity_count" bson:"activity_count"`
+	ActivityTypes []string           `json:"activity_types" bson:"activity_types"`
+	FirstActivity time.Time          `json:"first_activity" bson:"first_activity"`
+	LastActivity  time.Time          `json:"last_activity" bson:"last_activity"`
+	CreatedAt     time.Time          `json:"created_at" bson:"created_at"`
+	UpdatedAt     time.Time          `json:"updated_at" bson:"updated_at"`
 }
 
 // Common Response Models
