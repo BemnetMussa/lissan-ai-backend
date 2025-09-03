@@ -46,17 +46,26 @@ func AuthMiddleware(jwtService service.JWTService) gin.HandlerFunc {
 		}
 
 		// Set user ID in context
-		c.Set("userID", userID)
+		c.Set("user_id", userID.Hex())
 		c.Next()
 	}
 }
 
 func GetUserIDFromContext(c *gin.Context) (primitive.ObjectID, bool) {
-	userID, exists := c.Get("userID")
+	userID, exists := c.Get("user_id")
 	if !exists {
 		return primitive.NilObjectID, false
 	}
 
-	id, ok := userID.(primitive.ObjectID)
-	return id, ok
+	userIDStr, ok := userID.(string)
+	if !ok {
+		return primitive.NilObjectID, false
+	}
+
+	id, err := primitive.ObjectIDFromHex(userIDStr)
+	if err != nil {
+		return primitive.NilObjectID, false
+	}
+
+	return id, true
 }

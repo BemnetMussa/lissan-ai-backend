@@ -1,20 +1,27 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"lissanai.com/backend/internal/domain/models"
 	"lissanai.com/backend/internal/middleware"
+	"lissanai.com/backend/internal/service"
 	"lissanai.com/backend/internal/usecase"
 )
 
 type ChatHandler struct {
-	usecase *usecase.ChatUsecase
+	usecase       *usecase.ChatUsecase
+	streakService *service.StreakService
 }
 
-func NewChatHandler(u *usecase.ChatUsecase) *ChatHandler {
-	return &ChatHandler{usecase: u}
+func NewChatHandler(u *usecase.ChatUsecase, streakService *service.StreakService) *ChatHandler {
+	return &ChatHandler{
+		usecase:       u,
+		streakService: streakService,
+	}
 }
 
 // StartSessionHandler creates a new interview session
@@ -94,6 +101,16 @@ func (h *ChatHandler) SubmitAnswerHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Record streak activity for mock interview session
+	if userID, exists := c.Get("user_id"); exists {
+		if objectID, err := primitive.ObjectIDFromHex(userID.(string)); err == nil {
+			if err := h.streakService.RecordActivity(c.Request.Context(), objectID, "mock_interview"); err != nil {
+				log.Printf("Failed to record streak activity for user %s: %v", objectID.Hex(), err)
+				// Don't fail the request if streak recording fails
+			}
+		}
 	}
 
 	c.JSON(http.StatusOK, msg)
