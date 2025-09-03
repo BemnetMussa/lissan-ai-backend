@@ -157,6 +157,7 @@ func New() *gin.Engine {
 
 		// Free Speaking route
 		SetupSpeakingRoutes(apiV1)
+		SetupPronunciationRoutes(apiV1)
 
 		// Pronunciation routes (protected)
 		pronunciationRoutes := apiV1.Group("/pronunciation")
