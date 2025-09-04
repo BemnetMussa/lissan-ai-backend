@@ -1,5 +1,67 @@
 basePath: /api/v1
 definitions:
+  domain.ActivityCalendarDay:
+    properties:
+      activity_count:
+        description: Number of activities on this day
+        type: integer
+      activity_types:
+        description: Types of activities done
+        items:
+          type: string
+        type: array
+      date:
+        description: YYYY-MM-DD format
+        type: string
+      has_activity:
+        description: Whether user was active on this day
+        type: boolean
+    type: object
+  domain.ActivityCalendarResponse:
+    properties:
+      active_days:
+        type: integer
+      current_streak:
+        type: integer
+      longest_streak:
+        type: integer
+      summary:
+        $ref: '#/definitions/domain.ActivityCalendarSummary'
+      total_days:
+        type: integer
+      weeks:
+        items:
+          $ref: '#/definitions/domain.ActivityCalendarWeek'
+        type: array
+      year:
+        type: integer
+    type: object
+  domain.ActivityCalendarSummary:
+    properties:
+      activity_breakdown:
+        additionalProperties:
+          type: integer
+        description: Count by activity type
+        type: object
+      consecutive_weeks:
+        description: Weeks with at least one activity
+        type: integer
+      most_active_count:
+        description: Max activities in a single day
+        type: integer
+      most_active_day:
+        description: Date with most activities
+        type: string
+      total_activities:
+        type: integer
+    type: object
+  domain.ActivityCalendarWeek:
+    properties:
+      days:
+        items:
+          $ref: '#/definitions/domain.ActivityCalendarDay'
+        type: array
+    type: object
   domain.AuthResponse:
     properties:
       access_token:
@@ -23,6 +85,12 @@ definitions:
         type: string
     required:
     - email
+    type: object
+  domain.FreezeStreakRequest:
+    properties:
+      reason:
+        example: Vacation
+        type: string
     type: object
   domain.LearningPathResponse:
     properties:
@@ -267,6 +335,25 @@ definitions:
     - access_token
     - provider
     type: object
+  domain.StreakInfo:
+    properties:
+      can_freeze:
+        type: boolean
+      current_streak:
+        type: integer
+      days_until_loss:
+        type: integer
+      freeze_count:
+        type: integer
+      last_activity_date:
+        type: string
+      longest_streak:
+        type: integer
+      max_freezes:
+        type: integer
+      streak_frozen:
+        type: boolean
+    type: object
   domain.SuccessResponse:
     properties:
       message:
@@ -292,10 +379,19 @@ definitions:
     properties:
       created_at:
         type: string
+      current_streak:
+        description: Streak System
+        type: integer
       email:
         type: string
+      freeze_count:
+        type: integer
       id:
         type: string
+      last_activity_date:
+        type: string
+      longest_streak:
+        type: integer
       name:
         type: string
       provider:
@@ -303,285 +399,10 @@ definitions:
       settings:
         additionalProperties: true
         type: object
-      updated_at:
-        type: string
-    type: object
-  domain.LearningPathResponse:
-    properties:
-      id:
-        type: string
-      title:
-        type: string
-      description:
-        type: string
-      level:
-        type: string
-        enum: [beginner, intermediate, advanced]
-      category:
-        type: string
-      duration:
-        type: integer
-        description: Duration in minutes
-      lesson_ids:
-        type: array
-        items:
-          type: string
-      total_lessons:
-        type: integer
-      user_progress:
-        type: number
-        format: float
-      is_enrolled:
-        type: boolean
-      completed_lessons:
-        type: integer
-      created_at:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  domain.LessonResponse:
-    properties:
-      id:
-        type: string
-      path_id:
-        type: string
-      title:
-        type: string
-      description:
-        type: string
-      content:
-        type: string
-      type:
-        type: string
-        enum: [video, text, quiz, exercise]
-      duration:
-        type: integer
-        description: Duration in minutes
-      order:
-        type: integer
-      quiz_id:
-        type: string
-      is_completed:
-        type: boolean
-      quiz:
-        $ref: '#/definitions/domain.Quiz'
-      created_at:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  domain.Quiz:
-    properties:
-      id:
-        type: string
-      lesson_id:
-        type: string
-      title:
-        type: string
-      questions:
-        type: array
-        items:
-          $ref: '#/definitions/domain.Question'
-      created_at:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  domain.Question:
-    properties:
-      id:
-        type: string
-      text:
-        type: string
-      type:
-        type: string
-        enum: [multiple_choice, true_false, text]
-      options:
-        type: array
-        items:
-          type: string
-      points:
-        type: integer
-    type: object
-  domain.ProgressResponse:
-    properties:
-      path_id:
-        type: string
-      path_title:
-        type: string
-      progress:
-        type: number
-        format: float
-        description: Progress percentage (0-100)
-      completed_lessons:
-        type: array
-        items:
-          type: string
-      current_lesson:
-        type: string
-      total_lessons:
-        type: integer
-      enrolled_at:
-        type: string
-      last_accessed_at:
-        type: string
-    type: object
-  domain.QuizSubmissionRequest:
-    properties:
-      quiz_id:
-        type: string
-        example: "60f7b3b3b3b3b3b3b3b3b3b3"
-      answers:
-        type: object
-        additionalProperties:
-          type: string
-        example:
-          q1: "I have seen that movie"
-          q2: "True"
-          q3: "will have completed"
-    required:
-    - quiz_id
-    - answers
-    type: object
-  domain.QuizResultResponse:
-    properties:
-      quiz_id:
-        type: string
-      lesson_id:
-        type: string
-      score:
-        type: number
-        format: float
-      max_score:
-        type: integer
-      percentage:
-        type: number
-        format: float
-      passed:
-        type: boolean
-      answers:
-        type: object
-        additionalProperties:
-          type: string
-      correct_answers:
-        type: object
-        additionalProperties:
-          type: string
-      created_at:
-        type: string
-    type: object
-  domain.SuccessResponse:
-    properties:
-      message:
-        type: string
-    type: object
-  domain.StreakInfo:
-    properties:
-      current_streak:
-        type: integer
-        example: 7
-      longest_streak:
-        type: integer
-        example: 15
-      last_activity_date:
-        type: string
-        format: date-time
       streak_frozen:
         type: boolean
-        example: false
-      freeze_count:
-        type: integer
-        example: 1
-      max_freezes:
-        type: integer
-        example: 2
-      can_freeze:
-        type: boolean
-        example: true
-      days_until_loss:
-        type: integer
-        example: 1
-    type: object
-  domain.FreezeStreakRequest:
-    properties:
-      reason:
+      updated_at:
         type: string
-        example: "Vacation"
-    type: object
-  domain.ActivityCalendarDay:
-    properties:
-      date:
-        type: string
-        example: "2025-09-03"
-        description: Date in YYYY-MM-DD format
-      activity_count:
-        type: integer
-        example: 3
-        description: Number of activities on this day
-      has_activity:
-        type: boolean
-        example: true
-      activity_types:
-        type: array
-        items:
-          type: string
-        example: ["lesson_completed", "quiz_passed"]
-    type: object
-  domain.ActivityCalendarWeek:
-    properties:
-      days:
-        type: array
-        items:
-          $ref: '#/definitions/domain.ActivityCalendarDay'
-    type: object
-  domain.ActivityCalendarSummary:
-    properties:
-      total_activities:
-        type: integer
-        example: 42
-      activity_breakdown:
-        type: object
-        additionalProperties:
-          type: integer
-        example:
-          lesson_completed: 15
-          quiz_passed: 12
-          grammar_check: 8
-          pronunciation_session: 7
-      most_active_day:
-        type: string
-        example: "2025-09-03"
-      most_active_count:
-        type: integer
-        example: 5
-      consecutive_weeks:
-        type: integer
-        example: 3
-    type: object
-  domain.ActivityCalendarResponse:
-    properties:
-      year:
-        type: integer
-        example: 2025
-      total_days:
-        type: integer
-        example: 365
-      active_days:
-        type: integer
-        example: 42
-      current_streak:
-        type: integer
-        example: 7
-      longest_streak:
-        type: integer
-        example: 15
-      weeks:
-        type: array
-        items:
-          $ref: '#/definitions/domain.ActivityCalendarWeek'
-      summary:
-        $ref: '#/definitions/domain.ActivityCalendarSummary'
     type: object
   entities.EditEmailRequest:
     properties:
@@ -643,13 +464,20 @@ definitions:
       corrected_phrase:
         type: string
       explanation:
-        type: string
+        $ref: '#/definitions/models.Explanation'
       original_phrase:
         type: string
     type: object
   models.ErrorResponse:
     properties:
       error:
+        type: string
+    type: object
+  models.Explanation:
+    properties:
+      amharic:
+        type: string
+      english:
         type: string
     type: object
   models.Feedback:
@@ -726,7 +554,7 @@ definitions:
         example: 13c70d60-8dab-4b08-b454-5225dcca1809
         type: string
     type: object
-host: lissan-ai-backend-dev.onrender.com
+host: localhost:8080
 info:
   contact: {}
   description: AI-powered English coach for Ethiopians seeking global job opportunities
@@ -973,6 +801,164 @@ paths:
       summary: Submit quiz answers
       tags:
       - Learning
+  /api/v1/pronunciation/activity:
+    post:
+      consumes:
+      - application/json
+      description: Record that a user completed a pronunciation practice session for
+        streak tracking
+      parameters:
+      - description: Pronunciation session data
+        in: body
+        name: request
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Record pronunciation practice activity
+      tags:
+      - Pronunciation
+  /api/v1/streak/activity:
+    post:
+      consumes:
+      - application/json
+      description: Record a user activity to maintain their streak - this is called
+        internally by other services
+      parameters:
+      - description: Type of activity
+        enum:
+        - lesson_completed
+        - quiz_passed
+        - daily_goal_met
+        in: query
+        name: activity_type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Record activity (Internal)
+      tags:
+      - Streak
+  /api/v1/streak/calendar:
+    get:
+      description: Get GitHub-like activity calendar showing daily learning activities
+      parameters:
+      - description: 'Year (default: current year)'
+        example: 2025
+        in: query
+        name: year
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.ActivityCalendarResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get activity calendar
+      tags:
+      - Streak
+  /api/v1/streak/freeze:
+    post:
+      consumes:
+      - application/json
+      description: Freeze the user's current streak to prevent it from being lost
+        due to inactivity (limited uses per month)
+      parameters:
+      - description: Freeze reason
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/domain.FreezeStreakRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Freeze streak
+      tags:
+      - Streak
+  /api/v1/streak/info:
+    get:
+      description: Get the current user's streak information including current streak,
+        longest streak, and freeze status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.StreakInfo'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user streak information
+      tags:
+      - Streak
   /auth/forgot-password:
     post:
       consumes:
@@ -1603,337 +1589,6 @@ paths:
       summary: Real-time AI Voice Conversation
       tags:
       - Conversation
-  /learning/paths/{id}/enroll:
-    post:
-      description: Enroll the authenticated user in a specific learning path
-      parameters:
-      - description: Learning Path ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.SuccessResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Enroll in a learning path
-      tags:
-      - Learning
-  /learning/paths/{id}/progress:
-    get:
-      description: Get the authenticated user's progress for a specific learning path
-      parameters:
-      - description: Learning Path ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.ProgressResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get user progress for a learning path
-      tags:
-      - Learning
-  /learning/lessons/{id}:
-    get:
-      description: Fetch the content for a specific lesson
-      parameters:
-      - description: Lesson ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.LessonResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get lesson content
-      tags:
-      - Learning
-  /learning/lessons/{id}/complete:
-    post:
-      description: Mark a lesson as completed for the authenticated user
-      parameters:
-      - description: Lesson ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.SuccessResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Mark lesson as completed
-      tags:
-      - Learning
-  /learning/quizzes/{id}/submit:
-    post:
-      consumes:
-      - application/json
-      description: Submit user's answers to a quiz for grading
-      parameters:
-      - description: Quiz ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Quiz answers
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/domain.QuizSubmissionRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.QuizResultResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Submit quiz answers
-      tags:
-      - Learning
-  /streak/info:
-    get:
-      description: Get the current user's streak information including current streak, longest streak, and freeze status
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.StreakInfo'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get user streak information
-      tags:
-      - Streak
-  /streak/freeze:
-    post:
-      consumes:
-      - application/json
-      description: Freeze the user's current streak to prevent it from being lost due to inactivity (limited uses per month)
-      parameters:
-      - description: Freeze reason
-        in: body
-        name: request
-        required: false
-        schema:
-          $ref: '#/definitions/domain.FreezeStreakRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.SuccessResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Freeze streak
-      tags:
-      - Streak
-  /streak/activity:
-    post:
-      consumes:
-      - application/json
-      description: Record a user activity to maintain their streak - this is called internally by other services
-      parameters:
-      - description: Type of activity
-        enum:
-        - lesson_completed
-        - quiz_passed
-        - daily_goal_met
-        - pronunciation_session
-        - mock_interview
-        - grammar_check
-        in: query
-        name: activity_type
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.SuccessResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Record activity (Internal)
-      tags:
-      - Streak
-  /streak/calendar:
-    get:
-      description: Get GitHub-like activity calendar showing daily learning activities
-      parameters:
-      - description: Year (default: current year)
-        example: 2025
-        in: query
-        name: year
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.ActivityCalendarResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get activity calendar
-      tags:
-      - Streak
 securityDefinitions:
   BearerAuth:
     description: Type "Bearer" followed by a space and JWT token.

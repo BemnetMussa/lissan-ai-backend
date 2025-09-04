@@ -10,6 +10,13 @@ import (
 	"os/exec"
 )
 
+
+//--------------------------------------
+// switched to UnrealEngine TTS provider
+//--------------------------------------
+
+
+
 // UnrealSpeechTTSClient holds the configuration for the Unreal Speech API client.
 type UnrealSpeechTTSClient struct {
 	apiKey  string
@@ -17,12 +24,11 @@ type UnrealSpeechTTSClient struct {
 	client  *http.Client
 }
 
-// unrealSpeechRequest defines the JSON body for the Unreal Speech API request.
-// Note the JSON tags match the API's required capitalization.
+
 type unrealSpeechRequest struct {
 	Text    string `json:"Text"`
 	VoiceId string `json:"VoiceId"`
-	Bitrate string `json:"Bitrate,omitempty"` // omitempty means it won't be included if it's empty
+	Bitrate string `json:"Bitrate,omitempty"` 
 	Speed   string `json:"Speed,omitempty"`
 }
 
@@ -57,8 +63,7 @@ func (c *UnrealSpeechTTSClient) GenerateAudio(text string) ([]byte, error) {
 		return nil, fmt.Errorf("error creating request: %w", err)
 	}
 
-	// Set the new, correct headers for Unreal Speech
-	// It uses a Bearer token instead of 'xi-api-key'
+
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 
@@ -78,9 +83,7 @@ func (c *UnrealSpeechTTSClient) GenerateAudio(text string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-// PlayAudio does not need to change at all!
-// It already accepts a byte slice of audio, so it will work perfectly with the
-// output from our new GenerateAudio function.
+
 func (c *UnrealSpeechTTSClient) PlayAudio(audioData []byte) error {
 	tmpFile, err := os.CreateTemp("", "tts_*.mp3")
 	if err != nil {

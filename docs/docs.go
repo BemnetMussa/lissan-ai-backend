@@ -390,6 +390,250 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/pronunciation/activity": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Record that a user completed a pronunciation practice session for streak tracking",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pronunciation"
+                ],
+                "summary": "Record pronunciation practice activity",
+                "parameters": [
+                    {
+                        "description": "Pronunciation session data",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.SuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/streak/activity": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Record a user activity to maintain their streak - this is called internally by other services",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Streak"
+                ],
+                "summary": "Record activity (Internal)",
+                "parameters": [
+                    {
+                        "enum": [
+                            "lesson_completed",
+                            "quiz_passed",
+                            "daily_goal_met"
+                        ],
+                        "type": "string",
+                        "description": "Type of activity",
+                        "name": "activity_type",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.SuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/streak/calendar": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get GitHub-like activity calendar showing daily learning activities",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Streak"
+                ],
+                "summary": "Get activity calendar",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 2025,
+                        "description": "Year (default: current year)",
+                        "name": "year",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ActivityCalendarResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/streak/freeze": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Freeze the user's current streak to prevent it from being lost due to inactivity (limited uses per month)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Streak"
+                ],
+                "summary": "Freeze streak",
+                "parameters": [
+                    {
+                        "description": "Freeze reason",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/domain.FreezeStreakRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/streak/info": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get the current user's streak information including current streak, longest streak, and freeze status",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Streak"
+                ],
+                "summary": "Get user streak information",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.StreakInfo"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/forgot-password": {
             "post": {
                 "description": "Send password reset link to user's email",
@@ -1343,6 +1587,97 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.ActivityCalendarDay": {
+            "type": "object",
+            "properties": {
+                "activity_count": {
+                    "description": "Number of activities on this day",
+                    "type": "integer"
+                },
+                "activity_types": {
+                    "description": "Types of activities done",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "date": {
+                    "description": "YYYY-MM-DD format",
+                    "type": "string"
+                },
+                "has_activity": {
+                    "description": "Whether user was active on this day",
+                    "type": "boolean"
+                }
+            }
+        },
+        "domain.ActivityCalendarResponse": {
+            "type": "object",
+            "properties": {
+                "active_days": {
+                    "type": "integer"
+                },
+                "current_streak": {
+                    "type": "integer"
+                },
+                "longest_streak": {
+                    "type": "integer"
+                },
+                "summary": {
+                    "$ref": "#/definitions/domain.ActivityCalendarSummary"
+                },
+                "total_days": {
+                    "type": "integer"
+                },
+                "weeks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ActivityCalendarWeek"
+                    }
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.ActivityCalendarSummary": {
+            "type": "object",
+            "properties": {
+                "activity_breakdown": {
+                    "description": "Count by activity type",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "consecutive_weeks": {
+                    "description": "Weeks with at least one activity",
+                    "type": "integer"
+                },
+                "most_active_count": {
+                    "description": "Max activities in a single day",
+                    "type": "integer"
+                },
+                "most_active_day": {
+                    "description": "Date with most activities",
+                    "type": "string"
+                },
+                "total_activities": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.ActivityCalendarWeek": {
+            "type": "object",
+            "properties": {
+                "days": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.ActivityCalendarDay"
+                    }
+                }
+            }
+        },
         "domain.AuthResponse": {
             "type": "object",
             "properties": {
@@ -1377,6 +1712,15 @@ const docTemplate = `{
                 "email": {
                     "type": "string",
                     "example": "john@lissanai.com"
+                }
+            }
+        },
+        "domain.FreezeStreakRequest": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "type": "string",
+                    "example": "Vacation"
                 }
             }
         },
@@ -1737,6 +2081,35 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.StreakInfo": {
+            "type": "object",
+            "properties": {
+                "can_freeze": {
+                    "type": "boolean"
+                },
+                "current_streak": {
+                    "type": "integer"
+                },
+                "days_until_loss": {
+                    "type": "integer"
+                },
+                "freeze_count": {
+                    "type": "integer"
+                },
+                "last_activity_date": {
+                    "type": "string"
+                },
+                "longest_streak": {
+                    "type": "integer"
+                },
+                "max_freezes": {
+                    "type": "integer"
+                },
+                "streak_frozen": {
+                    "type": "boolean"
+                }
+            }
+        },
         "domain.SuccessResponse": {
             "type": "object",
             "properties": {
@@ -1775,11 +2148,24 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "current_streak": {
+                    "description": "Streak System",
+                    "type": "integer"
+                },
                 "email": {
                     "type": "string"
                 },
+                "freeze_count": {
+                    "type": "integer"
+                },
                 "id": {
                     "type": "string"
+                },
+                "last_activity_date": {
+                    "type": "string"
+                },
+                "longest_streak": {
+                    "type": "integer"
                 },
                 "name": {
                     "type": "string"
@@ -1790,6 +2176,9 @@ const docTemplate = `{
                 "settings": {
                     "type": "object",
                     "additionalProperties": true
+                },
+                "streak_frozen": {
+                    "type": "boolean"
                 },
                 "updated_at": {
                     "type": "string"
@@ -1888,7 +2277,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "explanation": {
-                    "type": "string"
+                    "$ref": "#/definitions/models.Explanation"
                 },
                 "original_phrase": {
                     "type": "string"
@@ -1899,6 +2288,17 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Explanation": {
+            "type": "object",
+            "properties": {
+                "amharic": {
+                    "type": "string"
+                },
+                "english": {
                     "type": "string"
                 }
             }
@@ -2029,7 +2429,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "lissan-ai-backend-dev.onrender.com",
+	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "LissanAI API",

@@ -45,11 +45,8 @@ func NewGroqClient(apiKey string) *GroqClient {
 
 func (c *GroqClient) GenerateContent(ctx context.Context, prompt string) (string, error) {
 	reqBody := GroqRequest{
-		// ==========================================================
-		// THE FIX: We are changing the model to a currently active one.
-		// ==========================================================
-		Model: "llama-3.3-70b-versatile", // From llama3-8b-8192
-		// ==========================================================
+	
+		Model: "llama-3.3-70b-versatile", 
 		Messages: []GroqMessage{
 			{Role: "system", Content: "You are a helpful AI assistant for a conversation. Be concise and conversational in your responses."},
 			{Role: "user", Content: prompt},
