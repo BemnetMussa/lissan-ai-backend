@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log" // Import the log package
 	"net/http"
 	"strings"
 	"time"
@@ -28,20 +29,26 @@ type WhisperErrorResponse struct {
 	EstimatedTime float64 `json:"estimated_time,omitempty"`
 }
 
+// Pre-defined errors for better control and testing
+var (
+	ErrTranscriptionServiceAuth    = errors.New("authentication or payment error with the transcription service")
+	ErrModelNotLoaded              = errors.New("model did not load in time after multiple retries")
+	ErrUnexpectedTranscription     = errors.New("an unexpected error occurred with the transcription service")
+)
+
 func NewWhisperClient(apiKey string) *WhisperClient {
 	return &WhisperClient{
 		apiKey: apiKey,
 		client: &http.Client{
-			// Setting a reasonable timeout is always a good practice.
 			Timeout: 30 * time.Second,
 		},
 	}
 }
 
 func (c *WhisperClient) Transcribe(ctx context.Context, audioData []byte) (string, error) {
+
 	url := "https://api-inference.huggingface.co/models/openai/whisper-large-v3"
 
-	// This retry logic for a loading model is smart. Let's make it robust.
 	for i := 0; i < 3; i++ {
 		req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(audioData))
 		if err != nil {
@@ -57,37 +64,52 @@ func (c *WhisperClient) Transcribe(ctx context.Context, audioData []byte) (strin
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			resp.Body.Close() // Still try to close it
+			resp.Body.Close()
 			return "", fmt.Errorf("failed to read whisper response body: %w", err)
 		}
+		
+		// Always ensure the body is closed
+		defer resp.Body.Close()
 
 		// The successful case
 		if resp.StatusCode == http.StatusOK {
-			resp.Body.Close() // We are done with the body, so we close it.
 			var wr WhisperResponse
 			if err := json.Unmarshal(body, &wr); err != nil {
-				return "", fmt.Errorf("failed to parse successful whisper response: %w, body: %s", err, string(body))
+				// Log the raw body for debugging, but don't return it
+				log.Printf("failed to parse successful whisper response, body: %s", string(body))
+				return "", fmt.Errorf("failed to parse successful whisper response: %w", err)
 			}
 			return wr.Text, nil
 		}
 
-		// The error case
-		var we WhisperErrorResponse
-		if err := json.Unmarshal(body, &we); err == nil && strings.Contains(strings.ToLower(we.Error), "loading") {
-			// ==========================================================
-			// THE FIX: Manually close the body BEFORE sleeping and continuing.
-			// ==========================================================
-			resp.Body.Close()
-			// ==========================================================
-			waitTime := time.Duration(we.EstimatedTime+2) * time.Second
-			time.Sleep(waitTime)
-			continue // Retry the loop
+	
+		// Handle specific client and server errors
+		switch resp.StatusCode {
+			// Handle auth, payment, or permission errors
+			case http.StatusUnauthorized, http.StatusForbidden, http.StatusPaymentRequired, http.StatusTooManyRequests:
+				// Log the detailed error for your own debugging
+				log.Printf("Received auth/payment error from Whisper API. Status: %s, Body: %s", resp.Status, string(body))
+				// Return a generic, safe error to the caller
+				return "", ErrTranscriptionServiceAuth
+
+			// Handle the specific "model loading" case with retries
+			case http.StatusServiceUnavailable:
+				var we WhisperErrorResponse
+				if err := json.Unmarshal(body, &we); err == nil && strings.Contains(strings.ToLower(we.Error), "loading") {
+					waitTime := time.Duration(we.EstimatedTime+2) * time.Second
+					log.Printf("Model is loading, retrying in %v...", waitTime)
+					time.Sleep(waitTime)
+					continue // Retry the loop
+				}
+
+			// For any other unexpected error, log the details but return a generic error.
+			default:
+				log.Printf("Unexpected Whisper API response. Status: %s, Body: %s", resp.Status, string(body))
+				return "", ErrUnexpectedTranscription
 		}
 
-		// Any other unexpected error
-		resp.Body.Close() // We are done, so close it.
-		return "", fmt.Errorf("unexpected whisper response, status: %s, body: %s", resp.Status, string(body))
+
 	}
 
-	return "", errors.New("model did not load in time after 3 retries")
+	return "", ErrModelNotLoaded
 }

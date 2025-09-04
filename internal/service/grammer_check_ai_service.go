@@ -52,6 +52,7 @@ func (as *AiService) CheckGrammar(text string) (*models.GrammarResponse, error) 
 	prompt := fmt.Sprintf(`
 You are a grammar correction assistant.
 Correct the grammar and spelling of the following text.
+You must provide explanations in both English and Amharic for each correction.
 Return the result strictly in JSON format with the following structure:
 {
   "corrected_text": "string",
@@ -59,7 +60,10 @@ Return the result strictly in JSON format with the following structure:
     {
       "original_phrase": "string",
       "corrected_phrase": "string",
-      "explanation": "string"
+      "explanation": {
+		"english": "string",
+		"amharic": "string"
+	  }
     }
   ]
 }

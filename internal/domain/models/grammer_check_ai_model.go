@@ -1,9 +1,14 @@
 package models
 
+type Explanation struct {
+	English string `json:"english"`
+	Amharic string `json:"amharic"`
+}
+
 type Correction struct {
-	OriginalPhrase  string `json:"original_phrase"`
-	CorrectedPhrase string `json:"corrected_phrase"`
-	Explanation     string `json:"explanation"`
+	OriginalPhrase  string      `json:"original_phrase"`
+	CorrectedPhrase string      `json:"corrected_phrase"`
+	Explanation     Explanation `json:"explanation"`
 }
 
 // GrammarResponse is returned by the GrammarUsecase.
