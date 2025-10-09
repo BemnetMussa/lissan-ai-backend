@@ -25,7 +25,7 @@ func NewChatAiService(apiKey string) (*ChatAiService, error) {
 	}
 
 	// Use gemini-1.5-flash for quick feedback tasks
-	model := client.GenerativeModel("gemini-1.5-flash")
+	model := client.GenerativeModel("gemini-flash-latest")
 
 	return &ChatAiService{model: model}, nil
 }

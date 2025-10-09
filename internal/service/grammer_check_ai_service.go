@@ -32,7 +32,7 @@ func NewAiService() (*AiService, error) {
 		return nil, fmt.Errorf("failed to create Gemini AI client: %w", err)
 	}
 
-	model := client.GenerativeModel("gemini-1.5-flash")
+	model := client.GenerativeModel("gemini-flash-latest")
 	return &AiService{model: model}, nil
 }
 

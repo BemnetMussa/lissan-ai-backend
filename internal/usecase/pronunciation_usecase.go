@@ -69,7 +69,7 @@ Here are the rules:
 		return nil, fmt.Errorf("failed to marshal sentence request: %w", err)
 	}
 
-	model := "gemini-1.5-flash-latest"
+	model := "gemini-flash-latest"
 	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s", model, uc.apiKey)
 
 	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
@@ -159,7 +159,7 @@ The JSON object must have three keys: "overall_accuracy_score", "mispronouncedwo
 	}
 
 	// 4. Create the HTTP request manually.
-	model := "gemini-1.5-flash-latest"
+	model := "gemini-flash-latest"
 	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s", model, uc.apiKey)
 
 	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
