@@ -20,7 +20,7 @@ func SetupEmailRoutes(router *gin.RouterGroup) { // Note: Removed the return val
 	}
 	log.Println("Successfully loaded GEMINI_API_KEY.")
 	// You should add a check here to ensure the key is not empty
-	emailService, err := service.NewAIEmailService(geminiAPIKey, "gemini-1.5-flash-latest") // Changed to gemini-pro for cost/speed
+	emailService, err := service.NewAIEmailService(geminiAPIKey, "gemini-flash-latest") // Changed to gemini-pro for cost/speed
 	if err != nil {
 		panic(err)
 	}
